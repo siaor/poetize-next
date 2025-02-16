@@ -1,14 +1,11 @@
 <br/>
 <br/>
-<h1 align="center">
-    POETIZE-NEXT
-
-    📜诗与远方，博采方长🛤️
-</h1>
+<h1 align="center">POETIZE-NEXT</h1>
+<h2 align="center">📜诗与远方，博采方长🛤️</h2>
 <h4 align="center">👩‍👩‍👧‍👦人 人 都 在 用 的 最 美 博 客📚</h4>
 <h3 align="center">🌻请带上曾经的热情出发！🌞</h3>
 <h3 align="center">✨遇见最美博客，下一站，出发！！🖌</h3>
-<h3 align="center">️长江后浪推前浪，感谢每一个热爱分享的博主！</h3>
+<h3 align="center">️长江后浪推前浪，感谢每一位热爱分享的博主！</h3>
 <h3 align="center">️点赞！⭐收藏！💬评论！🌟给个小星星！</h3>
 <h3 align="center">☕请喝咖啡~</h3>
 
@@ -28,14 +25,14 @@
 
 blog博客文章、相册、工具、友链、聊天室 IM
 
-![POETIZE-NEXT](https://siaor.neocities.org/siaor/poetize-next/home.jpg)
+![POETIZE-NEXT](./res/doc/img//home.jpg)
 
  </div>
 
 ## 介绍
 【POETIZE-NEXT】是基于[【LittleDonkey/POETIZE - 最美博客】](https://gitee.com/littledokey/poetize) 的后续改造项目，因为原项目不再维护，实属可惜。
 
-于是，作为POETIZE的延续，POETIZE-NEXT应运而生！下一站，让我们再次出发！
+于是，作为POETIZE的延续，**POETIZE-NEXT** 它来啦！下一站，让我们再次出发！
 
 后续会对项目进行重构、优化、改造，更新技术栈、增加功能，如果各位笔友有好的想法欢迎留言。
 
@@ -51,14 +48,18 @@ GitHub为主仓库，Gitee、GitCode会定时自动同步拉取最新代码，�
 
 Siaor也将使用**POETIZE-NEXT**作为个人博客，欢迎来访，看效果、学习！→【[https://blog.siaor.com](https://blog.siaor.com)】
 
-<span style="color: red;">**郑重承诺**</span>：你部署的**POETIZE-NEXT**，和我的一样，收费神马的，咱不做的！当然，谁都缺钱，有钱的捧个钱场，没钱的捧个人场，在**POETIZE-NEXT**我们秉承大家一起用！分享生活！交流技术！重燃写作热情！
+---
+<span style="color: red;">**郑重承诺：**</span>**你部署的POETIZE-NEXT，和我的一样，收费神马的，咱不做的！当然，谁都缺钱，有钱的捧个钱场，没钱的捧个人场，在POETIZE-NEXT我们秉承大家一起用！分享生活！交流技术！重燃写作热情！**
 
 如果有帮到你，或者非常想赞助，匿名赞助在底部扫码，在[SIAOR博客](https://blog.siaor.com)赞助可以上赞助榜单（预订功能，后续加）。
 
-*你随手赞助的咖啡会让人兴奋得睡不着觉，一拍大腿！又出一个新功能！*
+<div style="color: rgb(112,234,67);text-align: center;">
+钱不钱的，我对赚钱不感兴趣！我从来都喜欢钱！
+</div>
 
+---
 <span style="color: rgb(234,94,67);">
-**PS**：群什么的，懒得维护，以后再说。二次开发、部署教程会逐渐完善，稍等一下下
+**PS**：群什么的，现在懒得维护，以后再说。二次开发、部署教程会逐渐完善，稍等一下下。
 </span>
 
 
@@ -81,6 +82,7 @@ Siaor也将使用**POETIZE-NEXT**作为个人博客，欢迎来访，看效果�
 
 Vue3（IM 聊天室系统）是非必须的。如果部署，则需要依赖博客，然后从博客的“联系我”进入，因为登录模块在博客。
 
+---
 <span style="color: rgb(234,94,67);">
 **PS**：先延用之前的文档，后面要重构的。
 </span>
@@ -95,22 +97,34 @@ Vue3：
 2. npm run serve
 
 SpringBoot：
-1. 导入SQL文件到数据库（poetry.sql）
+1. 导入SQL文件到数据库（./res/db/sop.sql）
 2. 配置数据库连接（application.yml里面的datasource信息）
 3. 启动（PoetryApplication）
 
+---
 <span style="color: rgb(234,94,67);">
 **PS**：先延用之前的文档，需要二开的应该不多。
 </span>
 
 ## 部署文档
+
+---
 <span style="color: rgb(234,94,67);">
 **PS**：方式真的很多，部署脚本、docker部署，等我一下下，陆续更新！
 </span>
 
+## 展示
+
+---
+<div style="color: rgb(234,67,176);text-align: center;">
+来吧！展示！
+</div>
+
 ## 请作者喝咖啡
 
-<div style="display: flex; justify-content: space-between;">
-    <img src="https://siaor.neocities.org/siaor/pay-wx.png" alt="Image 1" style="width: 48%; height: auto;"/>
-    <img src="https://siaor.neocities.org/siaor/pay-zfb.png" alt="Image 2" style="width: 48%; height: auto;"/>
+---
+![POETIZE-NEXT](./res/doc/img/pay.jpg)
+
+<div style="color: rgb(234,94,67);text-align: center">
+*你随手赞助的咖啡会让人兴奋得睡不着觉，一拍大腿！又出一个新功能！*
 </div>
