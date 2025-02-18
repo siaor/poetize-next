@@ -117,9 +117,104 @@ SpringBoot：
 ## 展示
 
 ---
-<div align="center" style="color: rgb(234,67,176);text-align: center;">
+
+<div align="center" style="color: rgb(234,67,176);">
 来吧！展示！
 </div>
+
+<div align="center" style="color: rgb(25,223,177);">
+以下为部署了POETIZE-NEXT的博主，点击前往他们的博客看看效果吧！
+</div>
+
+<center>
+    <a href="https://blog.siaor.com" target="_blank"> 『 SIAOR 』</a>
+</center>
+
+---
+
+<div align="center" style="color: rgb(230,192,65);">
+以下内容截取时间不一定是最新版本，以具体页面展示效果为准
+</div>
+
+<center>🏠首页 ↓</center>
+
+![POETIZE-NEXT](public/doc/img/show/1.png)
+
+<center>主要展示个人博客、文章</center>
+
+---
+
+<center>💒家 ↓</center>
+
+![POETIZE-NEXT](public/doc/img/show/2.png)
+
+<center>狗粮满天飞</center>
+
+---
+
+<center>💒文章 ↓</center>
+
+![POETIZE-NEXT](public/doc/img/show/3.png)
+
+<center>博客文章的详情页面</center>
+
+---
+
+<center>💒百宝箱 ↓</center>
+
+![POETIZE-NEXT](public/doc/img/show/4.png)
+
+<center>友链、个人音乐库、收藏的网站资源</center>
+
+---
+
+<center>🌳树洞 ↓</center>
+
+![POETIZE-NEXT](public/doc/img/show/5.png)
+
+<center>不用登录，任何人都可以留言</center>
+
+---
+
+<center>💒微聊 ↓</center>
+
+![POETIZE-NEXT](public/doc/img/show/6.png)
+
+<center>需要登录，可以聊天吹牛</center>
+
+---
+
+<center>💒旅拍 ↓</center>
+
+![POETIZE-NEXT](public/doc/img/show/7.png)
+
+<center>展示旅行照片</center>
+
+---
+
+<center>💒后台 ↓</center>
+
+![POETIZE-NEXT](public/doc/img/show/8.png)
+
+<center>管理文章、用户、系统配置等</center>
+
+---
+
+<center>💒移动端-首页 ↓</center>
+
+![POETIZE-NEXT](public/doc/img/show/9.png)
+
+<center>💒移动端-菜单 ↓</center>
+
+![POETIZE-NEXT](public/doc/img/show/10.png)
+
+<center>💒移动端-文章 ↓</center>
+
+![POETIZE-NEXT](public/doc/img/show/11.png)
+
+<center>移动端自适应，功能一样</center>
+
+---
 
 ## 请作者喝咖啡
 
