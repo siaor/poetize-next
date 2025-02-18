@@ -8,7 +8,7 @@
     <springProperty scope="context" name="springAppName" source="spring.application.name" defaultValue="poetize"/>
 
     <!-- 日志目录 -->
-    <springProperty scope="context" name="logback.rootDir" source="logback.rootDir" defaultValue="/home/poetize/logs"/>
+    <springProperty scope="context" name="logback.rootDir" source="logback.rootDir" defaultValue="./logs"/>
 
 
     <!-- info日志单文件大小限制 -->

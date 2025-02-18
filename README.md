@@ -25,7 +25,7 @@
 
 blog博客文章、相册、工具、友链、聊天室 IM
 
-![POETIZE-NEXT](./res/doc/img//home.jpg)
+![POETIZE-NEXT](public/doc/img/home.jpg)
 
  </div>
 
@@ -49,7 +49,8 @@ GitHub为主仓库，Gitee、GitCode会定时自动同步拉取最新代码，�
 Siaor也将使用**POETIZE-NEXT**作为个人博客，欢迎来访，看效果、学习！→【[https://blog.siaor.com](https://blog.siaor.com)】
 
 ---
-<span style="color: red;">**郑重承诺：**</span>**你部署的POETIZE-NEXT，和我的一样，收费神马的，咱不做的！当然，谁都缺钱，有钱的捧个钱场，没钱的捧个人场，在POETIZE-NEXT我们秉承大家一起用！分享生活！交流技术！重燃写作热情！**
+<span style="color: red;">**郑重承诺：**</span>
+**你部署的POETIZE-NEXT，和我的一样，收费神马的，咱不做的！当然，谁都缺钱，有钱的捧个钱场，没钱的捧个人场，在POETIZE-NEXT我们秉承大家一起用！分享生活！交流技术！重燃写作热情！**
 
 如果有帮到你，或者非常想赞助，匿名赞助在底部扫码，在[SIAOR博客](https://blog.siaor.com)赞助可以上赞助榜单（预订功能，后续加）。
 
@@ -116,15 +117,17 @@ SpringBoot：
 ## 展示
 
 ---
-<div style="color: rgb(234,67,176);text-align: center;">
+<div align="center" style="color: rgb(234,67,176);text-align: center;">
 来吧！展示！
 </div>
 
 ## 请作者喝咖啡
 
 ---
-![POETIZE-NEXT](./res/doc/img/pay.jpg)
+![POETIZE-NEXT](public/doc/img/pay.jpg)
 
-<div style="color: rgb(234,94,67);text-align: center">
+<div align="center" style="color: rgb(234,94,67);text-align: center">
 *你随手赞助的咖啡会让人兴奋得睡不着觉，一拍大腿！又出一个新功能！*
 </div>
+
+---

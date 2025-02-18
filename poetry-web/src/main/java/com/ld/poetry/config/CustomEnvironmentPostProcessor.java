@@ -23,7 +23,7 @@ public class CustomEnvironmentPostProcessor implements EnvironmentPostProcessor 
 
     private static final String SOURCE_NAME = "sys_config";
 
-    private static final String SOURCE_SQL = "select * from poetize.sys_config";
+    private static final String SOURCE_SQL = "select * from sys_config";
 
     private static final String DATABASE = "poetize";
 
@@ -32,16 +32,20 @@ public class CustomEnvironmentPostProcessor implements EnvironmentPostProcessor 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
         try {
+            //todo:系统配置加载方式重构
             Map<String, Object> map = new HashMap<>();
 
             String username = environment.getProperty("spring.datasource.username");
             String password = environment.getProperty("spring.datasource.password");
-            String url = environment.getProperty("spring.datasource.url").replace("/poetize", "");
+            String url = environment.getProperty("spring.datasource.url");
             String driver = environment.getProperty("spring.datasource.driver-class-name");
             Class.forName(driver);
+            if(url == null) {
+                throw new PoetryRuntimeException();
+            }
             try (Connection connection = DriverManager.getConnection(url, username, password)) {
                 //初始化数据库
-                initDb(connection);
+                //initDb(connection);
                 //加载配置文件
                 try (Statement statement = connection.createStatement()) {
                     try (ResultSet resultSet = statement.executeQuery(SOURCE_SQL)) {
