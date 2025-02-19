@@ -88,30 +88,24 @@ Vue3（IM 聊天室系统）是非必须的。如果部署，则需要依赖博�
 **PS**：先延用之前的文档，后面要重构的。
 </span>
 
+## 安装部署
+
+---
+
+详见：
+[《安装部署手册》](https://blog.siaor.com/article/6)
+
 ## 二次开发
-Vue2：
-1. npm install
-2. npm run serve
-
-Vue3：
-1. npm install
-2. npm run serve
-
-SpringBoot：
-1. 导入SQL文件到数据库（./res/db/sop.sql）
-2. 配置数据库连接（application.yml里面的datasource信息）
-3. 启动（PoetryApplication）
 
 ---
-<span style="color: rgb(234,94,67);">
-**PS**：先延用之前的文档，需要二开的应该不多。
-</span>
 
-## 部署文档
+详见：
+[《开发手册》](https://blog.siaor.com/article/7)
 
 ---
+
 <span style="color: rgb(234,94,67);">
-**PS**：方式真的很多，部署脚本、docker部署，等我一下下，陆续更新！
+**PS**：为了方便相关文档的迭代更新，统一放于博客中。
 </span>
 
 ## 展示
