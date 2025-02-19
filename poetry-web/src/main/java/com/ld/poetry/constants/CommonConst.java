@@ -127,7 +127,7 @@ public class CommonConst {
     /**
      * 密钥
      */
-    public static final String CRYPOTJS_KEY = "sarasarasarasara";
+    public static final String CRYPOTJS_KEY = "poetize-next2025";
 
     /**
      * 根据用户ID获取用户信息

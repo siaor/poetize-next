@@ -8,13 +8,13 @@ VALUES (1, 'admin', '21232f297a57a5a743894a0e4a801fc3', '', '', 1, 1, '', '', ''
 -- 默认网站配置
 INSERT INTO `web_info`(`id`, `web_name`, `web_title`, `notices`, `footer`, `background_image`, `avatar`,
                        `random_avatar`, `random_name`, `random_cover`, `waifu_json`, `status`)
-VALUES (1, '诗与远方', 'POETIZE-NEXT', '[]', '云想衣裳花想容， 春风拂槛露华浓。', '', '', '[]', '[]', '[]', '{}', 1);
+VALUES (1, '诗与远方', 'POETIZE-NEXT', '[]', '春风轻抚栏边柳，露点晶莹华彩延。', '', '', '[]', '[]', '[]', '{}', 1);
 
 -- 默认家庭配置
 INSERT INTO `family` (`id`, `user_id`, `bg_cover`, `man_cover`, `woman_cover`, `man_name`, `woman_name`, `timing`,
                       `countdown_title`, `countdown_time`, `status`, `family_info`, `like_count`, `create_time`,
                       `update_time`)
-VALUES (1, 1, '/res/img/default/bg.jpg', '/res/img/default/avatar1.jpg', '/res/img/default/avatar0.jpg', '司马相如', '卓文君', '1970-01-01 00:00:00', '春节倒计时',
+VALUES (1, 1, '/res/sys/love.jpg', '/res/sys/avatar1.jpg', '/res/sys/avatar0.jpg', '司马相如', '卓文君', '1970-01-01 00:00:00', '春节倒计时',
         '2026-02-17 00:00:00', 1, '', 0, now(), now());
 
 -- 默认聊天室配置
@@ -34,14 +34,14 @@ VALUES (1, 'QQ邮箱号', 'spring.mail.username', '', '1'),
        (5, '默认存储平台', 'store.type', 'local', '2'),
        (6, '本地存储启用状态', 'local.enable', 'true', '2'),
        (7, '七牛云存储启用状态', 'qiniu.enable', 'false', '2'),
-       (8, '本地存储上传文件根目录', 'local.uploadUrl', '/app/blog/public/res', '1'),
+       (8, '本地存储上传文件根目录', 'local.uploadUrl', '/app/blog/public/res/', '1'),
        (9, '本地存储下载前缀', 'local.downloadUrl', '/res/', '2'),
        (10, '七牛云-accessKey', 'qiniu.accessKey', '', '1'),
        (11, '七牛云-secretKey', 'qiniu.secretKey', '', '1'),
        (12, '七牛云-bucket', 'qiniu.bucket', '', '1'),
        (13, '七牛云-域名', 'qiniu.downloadUrl', 'https://file.my.com/', '2'),
        (15, 'IM-聊天室启用状态', 'im.enable', 'true', '1'),
-       (16, '七牛云上传地址', 'qiniuUrl', 'https://upload.qiniup.com', '2'),
+       (16, '七牛云上传地址', 'qiniuUrl', 'https://upload.qiniup.com/', '2'),
        (17, '备案号', 'beian', '', '2'),
        (18, '前端静态资源路径前缀', 'webStaticResourcePrefix', '/res/', '2');
 
