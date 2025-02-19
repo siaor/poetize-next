@@ -24,7 +24,7 @@ public class ImConfigConst {
     /**
      * 监听端口
      */
-    public static final int SERVER_PORT = 9324;
+    public static final int SERVER_PORT = 4141;
 
     /**
      * 心跳超时时间，单位：毫秒
