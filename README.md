@@ -71,7 +71,7 @@ Siaor也将使用**POETIZE-NEXT**作为个人博客，欢迎来访，看效果�
 
 后端技术：Java，SpringBoot，MySQL，Mybatis-Plus，t-io，qiniu-java-sdk，spring-boot-starter-mail
 
-网站分两个模块：
+网站前端分两个模块：
 - 博客系统：具有文章，表白墙，图片墙，收藏夹，乐曲，视频播放，留言，友链，时间线，后台管理等功能。
 - 聊天室系统：具有朋友圈（时间线），好友，群等功能。
 
@@ -81,7 +81,7 @@ Siaor也将使用**POETIZE-NEXT**作为个人博客，欢迎来访，看效果�
 
 文件服务可以使用七牛云，也可以使用服务器。默认使用服务器。
 
-Vue3（IM 聊天室系统）是非必须的。如果部署，则需要依赖博客，然后从博客的“联系我”进入，因为登录模块在博客。
+Vue3（IM 聊天室系统）是非必须的。如果部署，则需要依赖博客，然后从博客的“微聊”进入，因为登录模块在博客。
 
 ---
 <span style="color: rgb(234,94,67);">
@@ -198,11 +198,11 @@ Vue3（IM 聊天室系统）是非必须的。如果部署，则需要依赖博�
 
 ![POETIZE-NEXT](public/doc/img/show/9.png)
 
-<center>💒移动端-菜单 ↓</center>
+<center>💒移动端-文章 ↓</center>
 
 ![POETIZE-NEXT](public/doc/img/show/10.png)
 
-<center>💒移动端-文章 ↓</center>
+<center>💒移动端-菜单 ↓</center>
 
 ![POETIZE-NEXT](public/doc/img/show/11.png)
 
@@ -218,5 +218,9 @@ Vue3（IM 聊天室系统）是非必须的。如果部署，则需要依赖博�
 <div align="center" style="color: rgb(234,94,67);text-align: center">
 *你随手赞助的咖啡会让人兴奋得睡不着觉，一拍大腿！又出一个新功能！*
 </div>
+
+---
+
+欢迎大家来博客反馈，在[树洞]可以匿名反馈，在[微聊]博主可以实时收到反馈消息，夜深人静的时候注意点，咳咳~
 
 ---
