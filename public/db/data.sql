@@ -14,7 +14,8 @@ VALUES (1, '诗与远方', 'POETIZE-NEXT', '[]', '春风轻抚栏边柳，露点
 INSERT INTO `family` (`id`, `user_id`, `bg_cover`, `man_cover`, `woman_cover`, `man_name`, `woman_name`, `timing`,
                       `countdown_title`, `countdown_time`, `status`, `family_info`, `like_count`, `create_time`,
                       `update_time`)
-VALUES (1, 1, '/res/sys/love.jpg', '/res/sys/avatar1.jpg', '/res/sys/avatar0.jpg', '司马相如', '卓文君', '1970-01-01 00:00:00', '春节倒计时',
+VALUES (1, 1, '/res/sys/love.jpg', '/res/sys/avatar1.jpg', '/res/sys/avatar0.jpg', '司马相如', '卓文君',
+        '1970-01-01 00:00:00', '春节倒计时',
         '2026-02-17 00:00:00', 1, '', 0, now(), now());
 
 -- 默认聊天室配置
@@ -45,3 +46,10 @@ VALUES (1, 'QQ邮箱号', 'spring.mail.username', '', '1'),
        (17, '备案号', 'beian', '', '2'),
        (18, '前端静态资源路径前缀', 'webStaticResourcePrefix', '/res/', '2');
 
+-- 默认友链
+INSERT INTO `resource_path` (`title`, `classify`, `cover`, `url`, `introduction`, `type`, `status`, `remark`,
+                             `create_time`)
+VALUES ('POETIZE', '🥇友情链接', 'https://s1.ax1x.com/2022/11/10/z9VlHs.png', 'https://gitee.com/littledokey/poetize',
+        '遇见最美博客，诗意~', 'friendUrl', 1, '', now()),
+       ('POETIZE-NEXT', '🥇友情链接', '/res/sys/poetize-next.png', 'https://gitee.com/siaor/poetize-next',
+        '遇见最美博客，下一站，出发！诗与远方~', 'friendUrl', 1, '', now());
