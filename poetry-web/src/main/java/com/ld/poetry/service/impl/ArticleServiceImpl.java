@@ -22,6 +22,7 @@ import com.ld.poetry.utils.CommonQuery;
 import com.ld.poetry.utils.PoetryUtil;
 import com.ld.poetry.utils.cache.PoetryCache;
 import com.ld.poetry.utils.mail.MailUtil;
+import com.ld.poetry.utils.storage.ArticleFileUtil;
 import com.ld.poetry.vo.ArticleVO;
 import com.ld.poetry.vo.BaseRequestVO;
 import org.springframework.beans.BeanUtils;
@@ -67,6 +68,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
     @Value("${user.subscribe.format}")
     private String subscribeFormat;
+
+    @Autowired
+    private ArticleFileUtil articleFileUtil;
 
     @Override
     public PoetryResult saveArticle(ArticleVO articleVO) {
@@ -115,6 +119,10 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         } catch (Exception e) {
             log.error("订阅邮件发送失败：", e);
         }
+
+        //创建文章md文件
+        articleFileUtil.create(article);
+
         return PoetryResult.success();
     }
 
@@ -137,6 +145,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
                 .eq(Article::getUserId, userId)
                 .remove();
         PoetryCache.remove(CommonConst.SORT_INFO);
+        articleFileUtil.delete(userId, id);
         return PoetryResult.success();
     }
 
@@ -176,6 +185,10 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         }
         updateChainWrapper.update();
         PoetryCache.remove(CommonConst.SORT_INFO);
+
+        Article article = new Article();
+        BeanUtils.copyProperties(articleVO, article);
+        articleFileUtil.update(article);
         return PoetryResult.success();
     }
 

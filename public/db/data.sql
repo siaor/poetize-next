@@ -26,25 +26,26 @@ insert into `im_chat_group_user` (`id`, `group_id`, `user_id`, `admin_flag`, `us
 values (1, -1, 1, 1, 1);
 
 -- 默认系统配置
-INSERT INTO `sys_config` (`id`, `config_name`, `config_key`, `config_value`, `config_type`)
-VALUES (1, 'QQ邮箱号', 'spring.mail.username', '', '1'),
-       (2, 'QQ邮箱授权码', 'spring.mail.password', '', '1'),
-       (3, '邮箱验证码模板', 'user.code.format',
+INSERT INTO `sys_config` (`config_name`, `config_key`, `config_value`, `config_type`)
+VALUES ('邮箱-发件号', 'spring.mail.username', '', '1'),
+       ('邮箱-授权码', 'spring.mail.password', '', '1'),
+       ('邮箱-验证码模板', 'user.code.format',
         '【POETIZE-NEXT】%s为本次验证的验证码，请在5分钟内完成验证。为保证账号安全，请勿泄漏此验证码。', '1'),
-       (4, '邮箱订阅模板', 'user.subscribe.format', '【POETIZE-NEXT】您订阅的专栏【%s】新增一篇文章：%s。', '1'),
-       (5, '默认存储平台', 'store.type', 'local', '2'),
-       (6, '本地存储启用状态', 'local.enable', 'true', '2'),
-       (7, '七牛云存储启用状态', 'qiniu.enable', 'false', '2'),
-       (8, '本地存储上传文件根目录', 'local.uploadUrl', '/app/blog/public/res/', '1'),
-       (9, '本地存储下载前缀', 'local.downloadUrl', '/res/', '2'),
-       (10, '七牛云-accessKey', 'qiniu.accessKey', '', '1'),
-       (11, '七牛云-secretKey', 'qiniu.secretKey', '', '1'),
-       (12, '七牛云-bucket', 'qiniu.bucket', '', '1'),
-       (13, '七牛云-域名', 'qiniu.downloadUrl', 'https://file.my.com/', '2'),
-       (15, 'IM-聊天室启用状态', 'im.enable', 'true', '1'),
-       (16, '七牛云上传地址', 'qiniuUrl', 'https://upload.qiniup.com/', '2'),
-       (17, '备案号', 'beian', '', '2'),
-       (18, '前端静态资源路径前缀', 'webStaticResourcePrefix', '/res/', '2');
+       ('邮箱-订阅模板', 'user.subscribe.format', '【POETIZE-NEXT】您订阅的专栏【%s】新增一篇文章：%s。', '1'),
+       ('默认存储平台', 'store.type', 'local', '2'),
+       ('本地存储-启用状态', 'local.enable', 'true', '2'),
+       ('本地存储-上传文件根目录', 'local.uploadUrl', '/app/blog/public/res/', '1'),
+       ('本地存储-上传文章文件目录', 'local.articleFilePath', '/app/blog/private/res/article/', '1'),
+       ('本地存储-下载前缀', 'local.downloadUrl', '/res/', '2'),
+       ('静态资源-访问前缀', 'webStaticResourcePrefix', '/res/', '2'),
+       ('七牛云-启用状态', 'qiniu.enable', 'false', '2'),
+       ('七牛云-accessKey', 'qiniu.accessKey', '', '1'),
+       ('七牛云-secretKey', 'qiniu.secretKey', '', '1'),
+       ('七牛云-bucket', 'qiniu.bucket', '', '1'),
+       ('七牛云-下载域名', 'qiniu.downloadUrl', 'https://file.my.com/', '2'),
+       ('七牛云-上传地址', 'qiniuUrl', 'https://upload.qiniup.com/', '2'),
+       ('IM-聊天室启用状态', 'im.enable', 'true', '1'),
+       ('备案号', 'beian', '', '2');
 
 -- 默认友链
 INSERT INTO `resource_path` (`title`, `classify`, `cover`, `url`, `introduction`, `type`, `status`, `remark`,

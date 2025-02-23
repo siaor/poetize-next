@@ -44,23 +44,3 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-user:
-  code:
-    format:
-  subscribe:
-    format:
-
-store:
-  type:
-
-local:
-  enable:
-  uploadUrl:
-  downloadUrl:
-
-qiniu:
-  enable:
-  accessKey:
-  secretKey:
-  bucket:
-  downloadUrl:

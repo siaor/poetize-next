@@ -14,4 +14,4 @@ source data.sql;
 
 -- 初始化安装记录，版本号为update.sql的最后一次更新版本号
 INSERT INTO `sys_update_log` (`create_time`, `update_time`, `version`, `note`)
-VALUES (now(), now(), '2025021701', '系统初始化安装完成');
+VALUES (now(), now(), '2025022301', '系统初始化安装完成');
