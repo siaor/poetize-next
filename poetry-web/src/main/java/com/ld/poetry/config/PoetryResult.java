@@ -42,6 +42,10 @@ public class PoetryResult<T> implements Serializable {
         return new PoetryResult(codeMsg.getCode(), codeMsg.getMsg());
     }
 
+    public static <T> PoetryResult<T> fail(CodeMsg codeMsg, String message) {
+        return new PoetryResult(codeMsg.getCode(), message);
+    }
+
     public static <T> PoetryResult<T> fail(Integer code, String message) {
         return new PoetryResult(code, message);
     }

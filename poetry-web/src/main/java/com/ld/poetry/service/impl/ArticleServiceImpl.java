@@ -6,18 +6,20 @@ import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapp
 import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ld.poetry.config.PoetryResult;
 import com.ld.poetry.aop.ResourceCheck;
+import com.ld.poetry.config.PoetryResult;
 import com.ld.poetry.constants.CommonConst;
 import com.ld.poetry.dao.ArticleMapper;
 import com.ld.poetry.dao.LabelMapper;
 import com.ld.poetry.dao.SortMapper;
 import com.ld.poetry.entity.*;
+import com.ld.poetry.enums.CodeMsg;
 import com.ld.poetry.enums.CommentTypeEnum;
 import com.ld.poetry.enums.PoetryEnum;
 import com.ld.poetry.service.ArticleService;
 import com.ld.poetry.service.UserService;
-import com.ld.poetry.utils.*;
+import com.ld.poetry.utils.CommonQuery;
+import com.ld.poetry.utils.PoetryUtil;
 import com.ld.poetry.utils.cache.PoetryCache;
 import com.ld.poetry.utils.mail.MailUtil;
 import com.ld.poetry.vo.ArticleVO;
@@ -246,11 +248,18 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
         Article article = lambdaQuery.one();
         if (article == null) {
-            return PoetryResult.success();
+            return PoetryResult.fail(CodeMsg.RES_LOSE);
         }
-        if (!article.getViewStatus() && (!StringUtils.hasText(password) || !password.equals(article.getPassword()))) {
-            return PoetryResult.fail("密码错误" + (StringUtils.hasText(article.getTips()) ? article.getTips() : "请联系作者获取密码"));
+
+        if (!article.getViewStatus()) {
+            if (!StringUtils.hasText(password)) {
+                return PoetryResult.fail(CodeMsg.PWD_NEED, StringUtils.hasText(article.getTips()) ? article.getTips() : CodeMsg.PWD_NEED.getMsg());
+            }
+            if (!article.getPassword().equals(password)) {
+                return PoetryResult.fail(CodeMsg.PWD_ERROR);
+            }
         }
+
         articleMapper.updateViewCount(id);
         article.setPassword(null);
         if (StringUtils.hasText(article.getVideoUrl())) {
