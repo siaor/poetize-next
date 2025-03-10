@@ -54,6 +54,10 @@ public class PoetryResult<T> implements Serializable {
         return new PoetryResult(data);
     }
 
+    public static <T> PoetryResult<T> success(String message) {
+        return new PoetryResult(200, message);
+    }
+
     public static <T> PoetryResult<T> success() {
         return new PoetryResult();
     }

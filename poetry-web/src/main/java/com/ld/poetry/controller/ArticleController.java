@@ -4,10 +4,11 @@ package com.ld.poetry.controller;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ld.poetry.aop.LoginCheck;
 import com.ld.poetry.config.PoetryResult;
-import com.ld.poetry.service.ArticleService;
 import com.ld.poetry.constants.CommonConst;
-import com.ld.poetry.utils.cache.PoetryCache;
+import com.ld.poetry.service.ArticleService;
 import com.ld.poetry.utils.PoetryUtil;
+import com.ld.poetry.utils.cache.PoetryCache;
+import com.ld.poetry.utils.storage.ArticleScanTask;
 import com.ld.poetry.vo.ArticleVO;
 import com.ld.poetry.vo.BaseRequestVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,9 @@ public class ArticleController {
 
     @Autowired
     private ArticleService articleService;
+
+    @Autowired
+    private ArticleScanTask articleScanTask;
 
 
     /**
@@ -71,6 +75,37 @@ public class ArticleController {
         return articleService.updateArticle(articleVO);
     }
 
+    /**
+     * 重新加载文章
+     *
+     * @author Siaor
+     * @since 2025-02-23 05:54:41
+     */
+    @PostMapping("/reload")
+    @LoginCheck(1)
+    public PoetryResult reloadArticle() {
+        PoetryCache.remove(CommonConst.USER_ARTICLE_LIST + PoetryUtil.getUserId().toString());
+        PoetryCache.remove(CommonConst.ARTICLE_LIST);
+        PoetryCache.remove(CommonConst.SORT_ARTICLE_LIST);
+        //判断重载任务是否处理完毕
+        int taskSize = articleScanTask.getSize();
+        if (taskSize > 0) {
+            return PoetryResult.success("正在重载数据中，剩余：" + taskSize);
+        }
+        return articleService.reload();
+    }
+
+    /**
+     * 获取重载任务数量
+     *
+     * @author Siaor
+     * @since 2025-03-10 08:48:09
+     */
+    @GetMapping("/reload/task")
+    @LoginCheck(1)
+    public PoetryResult getReloadTask() {
+        return PoetryResult.success(articleScanTask.getSize());
+    }
 
     /**
      * 查询文章List

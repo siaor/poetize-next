@@ -23,8 +23,10 @@ import com.ld.poetry.utils.PoetryUtil;
 import com.ld.poetry.utils.cache.PoetryCache;
 import com.ld.poetry.utils.mail.MailUtil;
 import com.ld.poetry.utils.storage.ArticleFileUtil;
+import com.ld.poetry.utils.storage.ArticleScanTask;
 import com.ld.poetry.vo.ArticleVO;
 import com.ld.poetry.vo.BaseRequestVO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,6 +37,9 @@ import org.springframework.util.StringUtils;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -46,6 +51,7 @@ import java.util.stream.Collectors;
  * @since 2021-08-13
  */
 @Service
+@Slf4j
 public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> implements ArticleService {
 
     @Autowired
@@ -71,6 +77,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
     @Autowired
     private ArticleFileUtil articleFileUtil;
+
+    @Autowired
+    private ArticleScanTask articleScanTask;
 
     @Override
     public PoetryResult saveArticle(ArticleVO articleVO) {
@@ -190,6 +199,57 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         BeanUtils.copyProperties(articleVO, article);
         articleFileUtil.update(article);
         return PoetryResult.success();
+    }
+
+    @Override
+    public PoetryResult reload() {
+        Integer userId = PoetryUtil.getUserId();
+        //获取全部文章文件信息
+        List<String> fileList = articleFileUtil.list(userId);
+        if (fileList.isEmpty()) {
+            return PoetryResult.success();
+        }
+
+        //加载到任务列表
+        articleScanTask.put(fileList);
+
+        //启动重载任务
+        taskHandle(userId);
+
+        return PoetryResult.success("正在为您重载文章，数量："+fileList.size());
+    }
+
+    private void taskHandle(Integer userId) {
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+        scheduler.scheduleAtFixedRate(() -> {
+            if (articleScanTask.isEmpty()) {
+                log.info("文章已全部重载完毕！");
+                scheduler.shutdownNow();
+            } else {
+                try {
+                    String filePath = articleScanTask.take();
+                    log.info("正在载入文章：{}", filePath);
+                    Article article = articleFileUtil.read(filePath);
+                    if(article ==null){
+                        return ;
+                    }
+
+                    Integer articleId = article.getId();
+                    if(articleId != null){
+                        log.info("文章已存在，跳过载入！");
+                        return ;
+                    }
+                    //补全数据
+                    article.setUserId(userId);
+
+                    save(article);
+                    articleFileUtil.appendId(filePath,article.getId());
+                    log.info("文章载入成功！");
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                }
+            }
+        }, 1, 1, TimeUnit.SECONDS);
     }
 
     @Override

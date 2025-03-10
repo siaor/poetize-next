@@ -26,6 +26,8 @@ public interface ArticleService extends IService<Article> {
 
     PoetryResult updateArticle(ArticleVO articleVO);
 
+    PoetryResult reload();
+
     PoetryResult<Page> listArticle(BaseRequestVO baseRequestVO);
 
     PoetryResult<ArticleVO> getArticleById(Integer id, String password);

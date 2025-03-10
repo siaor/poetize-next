@@ -10,6 +10,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 文章文件工具类
@@ -78,6 +82,24 @@ public class ArticleFileUtil {
     }
 
     /**
+     * 更新文章名称
+     *
+     * @author Siaor
+     * @since 2025-03-10 08:29:08
+     */
+    public void appendId(String filePath,Integer id) {
+        Path originalPath = Paths.get(filePath);
+        Path parent = originalPath.getParent();
+        Path newPath = parent.resolve(id + "." +originalPath.getFileName());
+
+        try {
+            Files.move(originalPath, newPath, StandardCopyOption.ATOMIC_MOVE);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+    }
+
+    /**
      * 根据文章信息删除文件
      *
      * @author Siaor
@@ -141,6 +163,102 @@ public class ArticleFileUtil {
         } catch (IOException | DirectoryIteratorException e) {
             log.error(e.getMessage());
         }
+    }
+
+    /**
+     * 读取文章文件
+     *
+     * @author Siaor
+     * @since 2025-03-10 08:10:46
+     */
+    public Article read(String filePath) {
+        File file = new File(filePath);
+        if (!file.isFile() || !file.exists()) {
+            return null;
+        }
+
+        Article article = new Article();
+        article.setArticleCover("");
+        article.setVideoUrl("");
+        article.setPassword("");
+        article.setTips("");
+        article.setViewStatus(true);
+        article.setCommentStatus(true);
+        article.setRecommendStatus(false);
+        article.setSortId(1);
+        article.setLabelId(1);
+
+        //名称
+        String fileName = file.getName().replace(".md", "");
+        article.setArticleTitle(fileName);
+
+        //ID
+        String[] fileParts = fileName.split("\\.");
+        if (fileParts.length >= 2) {
+            try {
+                Integer id = Integer.parseInt(fileParts[0]);
+                article.setId(id);
+            } catch (NumberFormatException e) {
+                log.info("未检测到ID");
+            }
+        }
+
+        //内容
+        Path path = Paths.get(filePath);
+        try {
+            String content = Files.readString(path, StandardCharsets.UTF_8);
+            article.setArticleContent(content);
+
+            //读取第一张图片
+            String regex = "\\!\\[.*?\\]\\((.*?)\\)";
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(content);
+            if (matcher.find()) {
+                article.setArticleCover(matcher.group(1));
+            }
+
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            return null;
+        }
+
+        return article;
+    }
+
+    /**
+     * 获取用户文章文件列表
+     *
+     * @author Siaor
+     * @since 2025-03-10 07:31:03
+     */
+    public List<String> list(Integer userId) {
+        List<String> fileList = new ArrayList<>();
+        if (userId == null) {
+            return fileList;
+        }
+        String userArticleFilePath = articleFilePath + userId + FileSystems.getDefault().getSeparator();
+
+
+        File directory = new File(userArticleFilePath);
+
+        if (!directory.exists() || !directory.isDirectory()) {
+            return fileList;
+        }
+
+        File[] files = directory.listFiles();
+
+        if (files == null) {
+            return fileList;
+        }
+
+        for (File file : files) {
+            if (file.isDirectory() || !file.getName().endsWith(".md")) {
+                continue;
+            }
+            fileList.add(file.getAbsolutePath());
+        }
+
+        return fileList;
     }
 
 }
