@@ -1,15 +1,15 @@
 package com.siaor.poetize.next.app.api.sys;
 
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
-import com.siaor.poetize.next.repo.po.LabelPO;
-import com.siaor.poetize.next.repo.po.SortPO;
-import com.siaor.poetize.next.res.aop.LoginCheck;
-import com.siaor.poetize.next.res.config.PoetryResult;
-import com.siaor.poetize.next.res.constants.CommonConst;
-import com.siaor.poetize.next.repo.mapper.LabelMapper;
-import com.siaor.poetize.next.repo.mapper.SortMapper;
+import com.siaor.poetize.next.res.repo.po.LabelPO;
+import com.siaor.poetize.next.res.repo.po.SortPO;
+import com.siaor.poetize.next.res.oper.aop.LoginCheck;
+import com.siaor.poetize.next.res.norm.ActResult;
+import com.siaor.poetize.next.res.norm.CommonConst;
+import com.siaor.poetize.next.res.repo.mapper.LabelMapper;
+import com.siaor.poetize.next.res.repo.mapper.SortMapper;
 import com.siaor.poetize.next.res.utils.CommonQuery;
-import com.siaor.poetize.next.res.utils.cache.PoetryCache;
+import com.siaor.poetize.next.res.repo.cache.SysCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -43,8 +43,8 @@ public class SortLabelApi {
      * 获取分类标签信息
      */
     @GetMapping("/getSortInfo")
-    public PoetryResult<List<SortPO>> getSortInfo() {
-        return PoetryResult.success(commonQuery.getSortInfo());
+    public ActResult<List<SortPO>> getSortInfo() {
+        return ActResult.success(commonQuery.getSortInfo());
     }
 
     /**
@@ -52,18 +52,18 @@ public class SortLabelApi {
      */
     @PostMapping("/saveSort")
     @LoginCheck(0)
-    public PoetryResult saveSort(@RequestBody SortPO sortPO) {
+    public ActResult saveSort(@RequestBody SortPO sortPO) {
         if (!StringUtils.hasText(sortPO.getSortName()) || !StringUtils.hasText(sortPO.getSortDescription())) {
-            return PoetryResult.fail("分类名称和分类描述不能为空！");
+            return ActResult.fail("分类名称和分类描述不能为空！");
         }
 
         if (sortPO.getPriority() == null) {
-            return PoetryResult.fail("分类必须配置优先级！");
+            return ActResult.fail("分类必须配置优先级！");
         }
 
         sortMapper.insert(sortPO);
-        PoetryCache.remove(CommonConst.SORT_INFO);
-        return PoetryResult.success();
+        SysCache.remove(CommonConst.SORT_INFO);
+        return ActResult.success();
     }
 
 
@@ -72,10 +72,10 @@ public class SortLabelApi {
      */
     @GetMapping("/deleteSort")
     @LoginCheck(0)
-    public PoetryResult deleteSort(@RequestParam("id") Integer id) {
+    public ActResult deleteSort(@RequestParam("id") Integer id) {
         sortMapper.deleteById(id);
-        PoetryCache.remove(CommonConst.SORT_INFO);
-        return PoetryResult.success();
+        SysCache.remove(CommonConst.SORT_INFO);
+        return ActResult.success();
     }
 
 
@@ -84,10 +84,10 @@ public class SortLabelApi {
      */
     @PostMapping("/updateSort")
     @LoginCheck(0)
-    public PoetryResult updateSort(@RequestBody SortPO sortPO) {
+    public ActResult updateSort(@RequestBody SortPO sortPO) {
         sortMapper.updateById(sortPO);
-        PoetryCache.remove(CommonConst.SORT_INFO);
-        return PoetryResult.success();
+        SysCache.remove(CommonConst.SORT_INFO);
+        return ActResult.success();
     }
 
 
@@ -95,8 +95,8 @@ public class SortLabelApi {
      * 查询List
      */
     @GetMapping("/listSort")
-    public PoetryResult<List<SortPO>> listSort() {
-        return PoetryResult.success(new LambdaQueryChainWrapper<>(sortMapper).list());
+    public ActResult<List<SortPO>> listSort() {
+        return ActResult.success(new LambdaQueryChainWrapper<>(sortMapper).list());
     }
 
 
@@ -105,13 +105,13 @@ public class SortLabelApi {
      */
     @PostMapping("/saveLabel")
     @LoginCheck(0)
-    public PoetryResult saveLabel(@RequestBody LabelPO labelPO) {
+    public ActResult saveLabel(@RequestBody LabelPO labelPO) {
         if (!StringUtils.hasText(labelPO.getLabelName()) || !StringUtils.hasText(labelPO.getLabelDescription()) || labelPO.getSortId() == null) {
-            return PoetryResult.fail("标签名称和标签描述和分类Id不能为空！");
+            return ActResult.fail("标签名称和标签描述和分类Id不能为空！");
         }
         labelMapper.insert(labelPO);
-        PoetryCache.remove(CommonConst.SORT_INFO);
-        return PoetryResult.success();
+        SysCache.remove(CommonConst.SORT_INFO);
+        return ActResult.success();
     }
 
 
@@ -120,10 +120,10 @@ public class SortLabelApi {
      */
     @GetMapping("/deleteLabel")
     @LoginCheck(0)
-    public PoetryResult deleteLabel(@RequestParam("id") Integer id) {
+    public ActResult deleteLabel(@RequestParam("id") Integer id) {
         labelMapper.deleteById(id);
-        PoetryCache.remove(CommonConst.SORT_INFO);
-        return PoetryResult.success();
+        SysCache.remove(CommonConst.SORT_INFO);
+        return ActResult.success();
     }
 
 
@@ -132,10 +132,10 @@ public class SortLabelApi {
      */
     @PostMapping("/updateLabel")
     @LoginCheck(0)
-    public PoetryResult updateLabel(@RequestBody LabelPO labelPO) {
+    public ActResult updateLabel(@RequestBody LabelPO labelPO) {
         labelMapper.updateById(labelPO);
-        PoetryCache.remove(CommonConst.SORT_INFO);
-        return PoetryResult.success();
+        SysCache.remove(CommonConst.SORT_INFO);
+        return ActResult.success();
     }
 
 
@@ -143,8 +143,8 @@ public class SortLabelApi {
      * 查询List
      */
     @GetMapping("/listLabel")
-    public PoetryResult<List<LabelPO>> listLabel() {
-        return PoetryResult.success(new LambdaQueryChainWrapper<>(labelMapper).list());
+    public ActResult<List<LabelPO>> listLabel() {
+        return ActResult.success(new LambdaQueryChainWrapper<>(labelMapper).list());
     }
 
 
@@ -152,10 +152,10 @@ public class SortLabelApi {
      * 查询List
      */
     @GetMapping("/listSortAndLabel")
-    public PoetryResult<Map> listSortAndLabel() {
+    public ActResult<Map> listSortAndLabel() {
         Map<String, List> map = new HashMap<>();
         map.put("sorts", new LambdaQueryChainWrapper<>(sortMapper).list());
         map.put("labels", new LambdaQueryChainWrapper<>(labelMapper).list());
-        return PoetryResult.success(map);
+        return ActResult.success(map);
     }
 }

@@ -1,8 +1,8 @@
 package com.siaor.poetize.next.res.utils.storage;
 
-import com.siaor.poetize.next.repo.po.ResourcePO;
+import com.siaor.poetize.next.res.repo.po.ResourcePO;
 import com.siaor.poetize.next.pow.ResourcePow;
-import com.siaor.poetize.next.res.constants.CommonConst;
+import com.siaor.poetize.next.res.norm.CommonConst;
 import com.siaor.poetize.next.app.vo.FileVO;
 import com.qiniu.common.QiniuException;
 import com.qiniu.http.Response;

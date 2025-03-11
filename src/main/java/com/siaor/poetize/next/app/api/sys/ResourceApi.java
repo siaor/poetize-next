@@ -2,11 +2,11 @@ package com.siaor.poetize.next.app.api.sys;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.siaor.poetize.next.repo.po.ResourcePO;
-import com.siaor.poetize.next.res.aop.LoginCheck;
-import com.siaor.poetize.next.res.config.PoetryResult;
-import com.siaor.poetize.next.res.constants.CommonConst;
-import com.siaor.poetize.next.res.enums.SysEnum;
+import com.siaor.poetize.next.res.repo.po.ResourcePO;
+import com.siaor.poetize.next.res.oper.aop.LoginCheck;
+import com.siaor.poetize.next.res.norm.ActResult;
+import com.siaor.poetize.next.res.norm.CommonConst;
+import com.siaor.poetize.next.res.norm.SysEnum;
 import com.siaor.poetize.next.pow.ResourcePow;
 import com.siaor.poetize.next.res.utils.PoetryUtil;
 import com.siaor.poetize.next.res.utils.storage.StoreService;
@@ -45,9 +45,9 @@ public class ResourceApi {
      */
     @PostMapping("/saveResource")
     @LoginCheck
-    public PoetryResult saveResource(@RequestBody ResourcePO resourcePO) {
+    public ActResult saveResource(@RequestBody ResourcePO resourcePO) {
         if (!StringUtils.hasText(resourcePO.getType()) || !StringUtils.hasText(resourcePO.getPath())) {
-            return PoetryResult.fail("资源类型和资源路径不能为空！");
+            return ActResult.fail("资源类型和资源路径不能为空！");
         }
         ResourcePO re = new ResourcePO();
         re.setPath(resourcePO.getPath());
@@ -58,7 +58,7 @@ public class ResourceApi {
         re.setStoreType(resourcePO.getStoreType());
         re.setUserId(PoetryUtil.getUserId());
         resourcePow.save(re);
-        return PoetryResult.success();
+        return ActResult.success();
     }
 
     /**
@@ -66,9 +66,9 @@ public class ResourceApi {
      */
     @PostMapping("/upload")
     @LoginCheck
-    public PoetryResult<String> upload(@RequestParam("file") MultipartFile file, FileVO fileVO) {
+    public ActResult<String> upload(@RequestParam("file") MultipartFile file, FileVO fileVO) {
         if (file == null || !StringUtils.hasText(fileVO.getType()) || !StringUtils.hasText(fileVO.getRelativePath())) {
-            return PoetryResult.fail("文件和资源类型和资源路径不能为空！");
+            return ActResult.fail("文件和资源类型和资源路径不能为空！");
         }
 
         fileVO.setFile(file);
@@ -84,7 +84,7 @@ public class ResourceApi {
         re.setOriginalName(fileVO.getOriginalName());
         re.setUserId(PoetryUtil.getUserId());
         resourcePow.save(re);
-        return PoetryResult.success(result.getVisitPath());
+        return ActResult.success(result.getVisitPath());
     }
 
     /**
@@ -92,15 +92,15 @@ public class ResourceApi {
      */
     @PostMapping("/deleteResource")
     @LoginCheck(0)
-    public PoetryResult deleteResource(@RequestParam("path") String path) {
+    public ActResult deleteResource(@RequestParam("path") String path) {
         ResourcePO resourcePO = resourcePow.lambdaQuery().select(ResourcePO::getStoreType).eq(ResourcePO::getPath, path).one();
         if (resourcePO == null) {
-            return PoetryResult.fail("文件不存在：" + path);
+            return ActResult.fail("文件不存在：" + path);
         }
 
         StoreService storeService = fileStorageService.getFileStorageByStoreType(resourcePO.getStoreType());
         storeService.deleteFile(Collections.singletonList(path));
-        return PoetryResult.success();
+        return ActResult.success();
     }
 
     /**
@@ -108,7 +108,7 @@ public class ResourceApi {
      */
     @GetMapping("/getImageList")
     @LoginCheck
-    public PoetryResult<List<String>> getImageList() {
+    public ActResult<List<String>> getImageList() {
         List<ResourcePO> list = resourcePow.lambdaQuery().select(ResourcePO::getPath)
                 .eq(ResourcePO::getType, CommonConst.PATH_TYPE_INTERNET_MEME)
                 .eq(ResourcePO::getStatus, SysEnum.STATUS_ENABLE.getCode())
@@ -116,7 +116,7 @@ public class ResourceApi {
                 .orderByDesc(ResourcePO::getCreateTime)
                 .list();
         List<String> paths = list.stream().map(ResourcePO::getPath).collect(Collectors.toList());
-        return PoetryResult.success(paths);
+        return ActResult.success(paths);
     }
 
     /**
@@ -124,11 +124,11 @@ public class ResourceApi {
      */
     @PostMapping("/listResource")
     @LoginCheck(0)
-    public PoetryResult<Page> listResource(@RequestBody BaseRequestVO baseRequestVO) {
+    public ActResult<Page> listResource(@RequestBody BaseRequestVO baseRequestVO) {
         resourcePow.lambdaQuery()
                 .eq(StringUtils.hasText(baseRequestVO.getResourceType()), ResourcePO::getType, baseRequestVO.getResourceType())
                 .orderByDesc(ResourcePO::getCreateTime).page(baseRequestVO);
-        return PoetryResult.success(baseRequestVO);
+        return ActResult.success(baseRequestVO);
     }
 
     /**
@@ -136,9 +136,9 @@ public class ResourceApi {
      */
     @GetMapping("/changeResourceStatus")
     @LoginCheck(0)
-    public PoetryResult changeResourceStatus(@RequestParam("id") Integer id, @RequestParam("flag") Boolean flag) {
+    public ActResult changeResourceStatus(@RequestParam("id") Integer id, @RequestParam("flag") Boolean flag) {
         resourcePow.lambdaUpdate().eq(ResourcePO::getId, id).set(ResourcePO::getStatus, flag).update();
-        return PoetryResult.success();
+        return ActResult.success();
     }
 }
 

@@ -1,7 +1,7 @@
 package com.siaor.poetize.next.res.utils.storage;
 
 
-import com.siaor.poetize.next.res.handle.PoetryRuntimeException;
+import com.siaor.poetize.next.res.norm.exception.SysRuntimeException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,7 +42,7 @@ public class FileStorageService implements ApplicationContextAware {
      */
     public StoreService getFileStorageByStoreType(String storeType) {
         if (!StringUtils.hasText(storeType) || !storeServiceMap.containsKey(storeType)) {
-            throw new PoetryRuntimeException("没有找到对应的存储平台：" + storeType);
+            throw new SysRuntimeException("没有找到对应的存储平台：" + storeType);
         }
 
         return storeServiceMap.get(storeType);
@@ -57,7 +57,7 @@ public class FileStorageService implements ApplicationContextAware {
         }
 
         if (!storeServiceMap.containsKey(storeType)) {
-            throw new PoetryRuntimeException("没有找到对应的存储平台：" + storeType);
+            throw new SysRuntimeException("没有找到对应的存储平台：" + storeType);
         }
 
         return storeServiceMap.get(storeType);

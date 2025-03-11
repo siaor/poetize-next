@@ -1,12 +1,12 @@
 package com.siaor.poetize.next.app.api.sys;
 
 
-import com.siaor.poetize.next.res.aop.LoginCheck;
-import com.siaor.poetize.next.res.config.PoetryResult;
-import com.siaor.poetize.next.res.aop.SaveCheck;
+import com.siaor.poetize.next.res.oper.aop.LoginCheck;
+import com.siaor.poetize.next.res.norm.ActResult;
+import com.siaor.poetize.next.res.oper.aop.SaveCheck;
 import com.siaor.poetize.next.pow.UserPow;
-import com.siaor.poetize.next.res.constants.CommonConst;
-import com.siaor.poetize.next.res.utils.cache.PoetryCache;
+import com.siaor.poetize.next.res.norm.CommonConst;
+import com.siaor.poetize.next.res.repo.cache.SysCache;
 import com.siaor.poetize.next.res.utils.PoetryUtil;
 import com.siaor.poetize.next.app.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +35,7 @@ public class UserApi {
      * 用户名/密码注册
      */
     @PostMapping("/regist")
-    public PoetryResult<UserVO> regist(@Validated @RequestBody UserVO user) {
+    public ActResult<UserVO> regist(@Validated @RequestBody UserVO user) {
         return userPow.regist(user);
     }
 
@@ -44,9 +44,9 @@ public class UserApi {
      * 用户名、邮箱、手机号/密码登录
      */
     @PostMapping("/login")
-    public PoetryResult<UserVO> login(@RequestParam("account") String account,
-                                      @RequestParam("password") String password,
-                                      @RequestParam(value = "isAdmin", defaultValue = "false") Boolean isAdmin) {
+    public ActResult<UserVO> login(@RequestParam("account") String account,
+                                   @RequestParam("password") String password,
+                                   @RequestParam(value = "isAdmin", defaultValue = "false") Boolean isAdmin) {
         return userPow.login(account, password, isAdmin);
     }
 
@@ -55,7 +55,7 @@ public class UserApi {
      * Token登录
      */
     @PostMapping("/token")
-    public PoetryResult<UserVO> login(@RequestParam("userToken") String userToken) {
+    public ActResult<UserVO> login(@RequestParam("userToken") String userToken) {
         return userPow.token(userToken);
     }
 
@@ -65,7 +65,7 @@ public class UserApi {
      */
     @GetMapping("/logout")
     @LoginCheck
-    public PoetryResult exit() {
+    public ActResult exit() {
         return userPow.exit();
     }
 
@@ -75,8 +75,8 @@ public class UserApi {
      */
     @PostMapping("/updateUserInfo")
     @LoginCheck
-    public PoetryResult<UserVO> updateUserInfo(@RequestBody UserVO user) {
-        PoetryCache.remove(CommonConst.USER_CACHE + PoetryUtil.getUserId().toString());
+    public ActResult<UserVO> updateUserInfo(@RequestBody UserVO user) {
+        SysCache.remove(CommonConst.USER_CACHE + PoetryUtil.getUserId().toString());
         return userPow.updateUserInfo(user);
     }
 
@@ -89,7 +89,7 @@ public class UserApi {
     @GetMapping("/getCode")
     @LoginCheck
     @SaveCheck
-    public PoetryResult getCode(@RequestParam("flag") Integer flag) {
+    public ActResult getCode(@RequestParam("flag") Integer flag) {
         return userPow.getCode(flag);
     }
 
@@ -102,7 +102,7 @@ public class UserApi {
     @GetMapping("/getCodeForBind")
     @LoginCheck
     @SaveCheck
-    public PoetryResult getCodeForBind(@RequestParam("place") String place, @RequestParam("flag") Integer flag) {
+    public ActResult getCodeForBind(@RequestParam("place") String place, @RequestParam("flag") Integer flag) {
         return userPow.getCodeForBind(place, flag);
     }
 
@@ -115,8 +115,8 @@ public class UserApi {
      */
     @PostMapping("/updateSecretInfo")
     @LoginCheck
-    public PoetryResult<UserVO> updateSecretInfo(@RequestParam("place") String place, @RequestParam("flag") Integer flag, @RequestParam(value = "code", required = false) String code, @RequestParam("password") String password) {
-        PoetryCache.remove(CommonConst.USER_CACHE + PoetryUtil.getUserId().toString());
+    public ActResult<UserVO> updateSecretInfo(@RequestParam("place") String place, @RequestParam("flag") Integer flag, @RequestParam(value = "code", required = false) String code, @RequestParam("password") String password) {
+        SysCache.remove(CommonConst.USER_CACHE + PoetryUtil.getUserId().toString());
         return userPow.updateSecretInfo(place, flag, code, password);
     }
 
@@ -128,7 +128,7 @@ public class UserApi {
      */
     @GetMapping("/getCodeForForgetPassword")
     @SaveCheck
-    public PoetryResult getCodeForForgetPassword(@RequestParam("place") String place, @RequestParam("flag") Integer flag) {
+    public ActResult getCodeForForgetPassword(@RequestParam("place") String place, @RequestParam("flag") Integer flag) {
         return userPow.getCodeForForgetPassword(place, flag);
     }
 
@@ -139,7 +139,7 @@ public class UserApi {
      * 2 邮箱
      */
     @PostMapping("/updateForForgetPassword")
-    public PoetryResult updateForForgetPassword(@RequestParam("place") String place, @RequestParam("flag") Integer flag, @RequestParam("code") String code, @RequestParam("password") String password) {
+    public ActResult updateForForgetPassword(@RequestParam("place") String place, @RequestParam("flag") Integer flag, @RequestParam("code") String code, @RequestParam("password") String password) {
         return userPow.updateForForgetPassword(place, flag, code, password);
     }
 
@@ -148,7 +148,7 @@ public class UserApi {
      */
     @GetMapping("/getUserByUsername")
     @LoginCheck
-    public PoetryResult<List<UserVO>> getUserByUsername(@RequestParam("username") String username) {
+    public ActResult<List<UserVO>> getUserByUsername(@RequestParam("username") String username) {
         return userPow.getUserByUsername(username);
     }
 
@@ -160,8 +160,8 @@ public class UserApi {
      */
     @GetMapping("/subscribe")
     @LoginCheck
-    public PoetryResult<UserVO> subscribe(@RequestParam("labelId") Integer labelId, @RequestParam("flag") Boolean flag) {
-        PoetryCache.remove(CommonConst.USER_CACHE + PoetryUtil.getUserId().toString());
+    public ActResult<UserVO> subscribe(@RequestParam("labelId") Integer labelId, @RequestParam("flag") Boolean flag) {
+        SysCache.remove(CommonConst.USER_CACHE + PoetryUtil.getUserId().toString());
         return userPow.subscribe(labelId, flag);
     }
 }

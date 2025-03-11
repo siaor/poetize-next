@@ -1,11 +1,11 @@
 package com.siaor.poetize.next.res.utils;
 
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
-import com.siaor.poetize.next.res.constants.CommonConst;
+import com.siaor.poetize.next.res.norm.CommonConst;
 import com.siaor.poetize.next.pow.UserPow;
-import com.siaor.poetize.next.repo.mapper.*;
-import com.siaor.poetize.next.repo.po.*;
-import com.siaor.poetize.next.res.utils.cache.PoetryCache;
+import com.siaor.poetize.next.res.repo.mapper.*;
+import com.siaor.poetize.next.res.repo.po.*;
+import com.siaor.poetize.next.res.repo.cache.SysCache;
 import com.siaor.poetize.next.app.vo.FamilyVO;
 import jakarta.annotation.PostConstruct;
 import org.apache.commons.io.IOUtils;
@@ -59,7 +59,7 @@ public class CommonQuery {
         Integer userId = PoetryUtil.getUserId();
         String ipUser = ip + (userId != null ? "_" + userId.toString() : "");
 
-        CopyOnWriteArraySet<String> ipHistory = (CopyOnWriteArraySet<String>) PoetryCache.get(CommonConst.IP_HISTORY);
+        CopyOnWriteArraySet<String> ipHistory = (CopyOnWriteArraySet<String>) SysCache.get(CommonConst.IP_HISTORY);
         if (!ipHistory.contains(ipUser)) {
             synchronized (ipUser.intern()) {
                 if (!ipHistory.contains(ipUser)) {
@@ -90,32 +90,32 @@ public class CommonQuery {
     }
 
     public UserPO getUser(Integer userId) {
-        UserPO userPO = (UserPO) PoetryCache.get(CommonConst.USER_CACHE + userId.toString());
+        UserPO userPO = (UserPO) SysCache.get(CommonConst.USER_CACHE + userId.toString());
         if (userPO != null) {
             return userPO;
         }
         UserPO u = userPow.getById(userId);
         if (u != null) {
-            PoetryCache.put(CommonConst.USER_CACHE + userId.toString(), u, CommonConst.EXPIRE);
+            SysCache.put(CommonConst.USER_CACHE + userId.toString(), u, CommonConst.EXPIRE);
             return u;
         }
         return null;
     }
 
     public List<UserPO> getAdmire() {
-        List<UserPO> admire = (List<UserPO>) PoetryCache.get(CommonConst.ADMIRE);
+        List<UserPO> admire = (List<UserPO>) SysCache.get(CommonConst.ADMIRE);
         if (admire != null) {
             return admire;
         }
 
         synchronized (CommonConst.ADMIRE.intern()) {
-            admire = (List<UserPO>) PoetryCache.get(CommonConst.ADMIRE);
+            admire = (List<UserPO>) SysCache.get(CommonConst.ADMIRE);
             if (admire != null) {
                 return admire;
             } else {
                 List<UserPO> userPOS = userPow.lambdaQuery().select(UserPO::getId, UserPO::getUsername, UserPO::getAdmire, UserPO::getAvatar).isNotNull(UserPO::getAdmire).list();
 
-                PoetryCache.put(CommonConst.ADMIRE, userPOS, CommonConst.EXPIRE);
+                SysCache.put(CommonConst.ADMIRE, userPOS, CommonConst.EXPIRE);
 
                 return userPOS;
             }
@@ -123,13 +123,13 @@ public class CommonQuery {
     }
 
     public List<FamilyVO> getFamilyList() {
-        List<FamilyVO> familyVOList = (List<FamilyVO>) PoetryCache.get(CommonConst.FAMILY_LIST);
+        List<FamilyVO> familyVOList = (List<FamilyVO>) SysCache.get(CommonConst.FAMILY_LIST);
         if (familyVOList != null) {
             return familyVOList;
         }
 
         synchronized (CommonConst.FAMILY_LIST.intern()) {
-            familyVOList = (List<FamilyVO>) PoetryCache.get(CommonConst.FAMILY_LIST);
+            familyVOList = (List<FamilyVO>) SysCache.get(CommonConst.FAMILY_LIST);
             if (familyVOList != null) {
                 return familyVOList;
             } else {
@@ -145,54 +145,54 @@ public class CommonQuery {
                     familyVOList = new ArrayList<>();
                 }
 
-                PoetryCache.put(CommonConst.FAMILY_LIST, familyVOList);
+                SysCache.put(CommonConst.FAMILY_LIST, familyVOList);
                 return familyVOList;
             }
         }
     }
 
     public Integer getCommentCount(Integer source, String type) {
-        Object count = PoetryCache.get(CommonConst.COMMENT_COUNT_CACHE + source.toString() + "_" + type);
+        Object count = SysCache.get(CommonConst.COMMENT_COUNT_CACHE + source.toString() + "_" + type);
         if (count != null) {
             return Integer.parseInt(String.valueOf(count));
         }
         LambdaQueryChainWrapper<CommentPO> wrapper = new LambdaQueryChainWrapper<>(commentMapper);
         Long c = wrapper.eq(CommentPO::getSource, source).eq(CommentPO::getType, type).count();
-        PoetryCache.put(CommonConst.COMMENT_COUNT_CACHE + source.toString() + "_" + type, c, CommonConst.EXPIRE);
+        SysCache.put(CommonConst.COMMENT_COUNT_CACHE + source.toString() + "_" + type, c, CommonConst.EXPIRE);
         return c.intValue();
     }
 
     public List<Integer> getUserArticleIds(Integer userId) {
-        List<Integer> ids = (List<Integer>) PoetryCache.get(CommonConst.USER_ARTICLE_LIST + userId.toString());
+        List<Integer> ids = (List<Integer>) SysCache.get(CommonConst.USER_ARTICLE_LIST + userId.toString());
         if (ids != null) {
             return ids;
         }
 
         synchronized ((CommonConst.USER_ARTICLE_LIST + userId.toString()).intern()) {
-            ids = (List<Integer>) PoetryCache.get(CommonConst.USER_ARTICLE_LIST + userId.toString());
+            ids = (List<Integer>) SysCache.get(CommonConst.USER_ARTICLE_LIST + userId.toString());
             if (ids != null) {
                 return ids;
             } else {
                 LambdaQueryChainWrapper<ArticlePO> wrapper = new LambdaQueryChainWrapper<>(articleMapper);
                 List<ArticlePO> articlePOS = wrapper.eq(ArticlePO::getUserId, userId).select(ArticlePO::getId).list();
                 List<Integer> collect = articlePOS.stream().map(ArticlePO::getId).collect(Collectors.toList());
-                PoetryCache.put(CommonConst.USER_ARTICLE_LIST + userId.toString(), collect, CommonConst.EXPIRE);
+                SysCache.put(CommonConst.USER_ARTICLE_LIST + userId.toString(), collect, CommonConst.EXPIRE);
                 return collect;
             }
         }
     }
 
     public List<List<Integer>> getArticleIds(String searchText) {
-        List<ArticlePO> articlePOS = (List<ArticlePO>) PoetryCache.get(CommonConst.ARTICLE_LIST);
+        List<ArticlePO> articlePOS = (List<ArticlePO>) SysCache.get(CommonConst.ARTICLE_LIST);
         if (articlePOS == null) {
             synchronized (CommonConst.ARTICLE_LIST.intern()) {
-                articlePOS = (List<ArticlePO>) PoetryCache.get(CommonConst.ARTICLE_LIST);
+                articlePOS = (List<ArticlePO>) SysCache.get(CommonConst.ARTICLE_LIST);
                 if (articlePOS == null) {
                     LambdaQueryChainWrapper<ArticlePO> wrapper = new LambdaQueryChainWrapper<>(articleMapper);
                     articlePOS = wrapper.select(ArticlePO::getId, ArticlePO::getArticleTitle, ArticlePO::getArticleContent)
                             .orderByDesc(ArticlePO::getCreateTime)
                             .list();
-                    PoetryCache.put(CommonConst.ARTICLE_LIST, articlePOS);
+                    SysCache.put(CommonConst.ARTICLE_LIST, articlePOS);
                 }
             }
         }
@@ -215,13 +215,13 @@ public class CommonQuery {
     }
 
     public List<SortPO> getSortInfo() {
-        List<SortPO> sortPOInfo = (List<SortPO>) PoetryCache.get(CommonConst.SORT_INFO);
+        List<SortPO> sortPOInfo = (List<SortPO>) SysCache.get(CommonConst.SORT_INFO);
         if (sortPOInfo != null) {
             return sortPOInfo;
         }
 
         synchronized (CommonConst.SORT_INFO.intern()) {
-            sortPOInfo = (List<SortPO>) PoetryCache.get(CommonConst.SORT_INFO);
+            sortPOInfo = (List<SortPO>) SysCache.get(CommonConst.SORT_INFO);
             if (sortPOInfo == null) {
                 List<SortPO> sortPOS = new LambdaQueryChainWrapper<>(sortMapper).list();
                 if (!CollectionUtils.isEmpty(sortPOS)) {
@@ -242,7 +242,7 @@ public class CommonQuery {
                         }
                     });
                 }
-                PoetryCache.put(CommonConst.SORT_INFO, sortPOS);
+                SysCache.put(CommonConst.SORT_INFO, sortPOS);
                 return sortPOS;
             } else {
                 return sortPOInfo;

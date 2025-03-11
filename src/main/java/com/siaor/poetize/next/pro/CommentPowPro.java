@@ -3,15 +3,15 @@ package com.siaor.poetize.next.pro;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.siaor.poetize.next.repo.po.ArticlePO;
-import com.siaor.poetize.next.repo.po.CommentPO;
-import com.siaor.poetize.next.repo.po.UserPO;
-import com.siaor.poetize.next.res.config.PoetryResult;
-import com.siaor.poetize.next.res.constants.CommonConst;
-import com.siaor.poetize.next.repo.mapper.ArticleMapper;
-import com.siaor.poetize.next.repo.mapper.CommentMapper;
-import com.siaor.poetize.next.res.enums.CodeMsg;
-import com.siaor.poetize.next.res.enums.CommentTypeEnum;
+import com.siaor.poetize.next.res.repo.po.ArticlePO;
+import com.siaor.poetize.next.res.repo.po.CommentPO;
+import com.siaor.poetize.next.res.repo.po.UserPO;
+import com.siaor.poetize.next.res.norm.ActResult;
+import com.siaor.poetize.next.res.norm.CommonConst;
+import com.siaor.poetize.next.res.repo.mapper.ArticleMapper;
+import com.siaor.poetize.next.res.repo.mapper.CommentMapper;
+import com.siaor.poetize.next.res.norm.ActCode;
+import com.siaor.poetize.next.res.norm.CommentTypeEnum;
 import com.siaor.poetize.next.pow.CommentPow;
 import com.siaor.poetize.next.res.utils.CommonQuery;
 import com.siaor.poetize.next.res.utils.PoetryUtil;
@@ -49,9 +49,9 @@ public class CommentPowPro extends ServiceImpl<CommentMapper, CommentPO> impleme
     private MailSendUtil mailSendUtil;
 
     @Override
-    public PoetryResult saveComment(CommentVO commentVO) {
+    public ActResult saveComment(CommentVO commentVO) {
         if (CommentTypeEnum.getEnumByCode(commentVO.getType()) == null) {
-            return PoetryResult.fail("评论来源类型不存在！");
+            return ActResult.fail("评论来源类型不存在！");
         }
         ArticlePO one = null;
         if (CommentTypeEnum.COMMENT_TYPE_ARTICLE.getCode().equals(commentVO.getType())) {
@@ -59,10 +59,10 @@ public class CommentPowPro extends ServiceImpl<CommentMapper, CommentPO> impleme
             one = articleWrapper.eq(ArticlePO::getId, commentVO.getSource()).select(ArticlePO::getUserId, ArticlePO::getArticleTitle, ArticlePO::getCommentStatus).one();
 
             if (one == null) {
-                return PoetryResult.fail("文章不存在");
+                return ActResult.fail("文章不存在");
             } else {
                 if (!one.getCommentStatus()) {
-                    return PoetryResult.fail("评论功能已关闭！");
+                    return ActResult.fail("评论功能已关闭！");
                 }
             }
         }
@@ -87,22 +87,22 @@ public class CommentPowPro extends ServiceImpl<CommentMapper, CommentPO> impleme
             log.error("发送评论邮件失败：", e);
         }
 
-        return PoetryResult.success();
+        return ActResult.success();
     }
 
     @Override
-    public PoetryResult deleteComment(Integer id) {
+    public ActResult deleteComment(Integer id) {
         Integer userId = PoetryUtil.getUserId();
         lambdaUpdate().eq(CommentPO::getId, id)
                 .eq(CommentPO::getUserId, userId)
                 .remove();
-        return PoetryResult.success();
+        return ActResult.success();
     }
 
     @Override
-    public PoetryResult<BaseRequestVO> listComment(BaseRequestVO baseRequestVO) {
+    public ActResult<BaseRequestVO> listComment(BaseRequestVO baseRequestVO) {
         if (baseRequestVO.getSource() == null || !StringUtils.hasText(baseRequestVO.getCommentType())) {
-            return PoetryResult.fail(CodeMsg.PARAMETER_ERROR);
+            return ActResult.fail(ActCode.PARAMETER_ERROR);
         }
 
         if (CommentTypeEnum.COMMENT_TYPE_ARTICLE.getCode().equals(baseRequestVO.getCommentType())) {
@@ -110,7 +110,7 @@ public class CommentPowPro extends ServiceImpl<CommentMapper, CommentPO> impleme
             ArticlePO one = articleWrapper.eq(ArticlePO::getId, baseRequestVO.getSource()).select(ArticlePO::getCommentStatus).one();
 
             if (one != null && !one.getCommentStatus()) {
-                return PoetryResult.fail("评论功能已关闭！");
+                return ActResult.fail("评论功能已关闭！");
             }
         }
 
@@ -119,7 +119,7 @@ public class CommentPowPro extends ServiceImpl<CommentMapper, CommentPO> impleme
             lambdaQuery().eq(CommentPO::getSource, baseRequestVO.getSource()).eq(CommentPO::getType, baseRequestVO.getCommentType()).eq(CommentPO::getParentCommentId, CommonConst.FIRST_COMMENT).orderByDesc(CommentPO::getCreateTime).page(baseRequestVO);
             List<CommentPO> commentPOS = baseRequestVO.getRecords();
             if (CollectionUtils.isEmpty(commentPOS)) {
-                return PoetryResult.success(baseRequestVO);
+                return ActResult.success(baseRequestVO);
             }
             List<CommentVO> commentVOs = commentPOS.stream().map(c -> {
                 CommentVO commentVO = buildCommentVO(c);
@@ -138,16 +138,16 @@ public class CommentPowPro extends ServiceImpl<CommentMapper, CommentPO> impleme
             lambdaQuery().eq(CommentPO::getSource, baseRequestVO.getSource()).eq(CommentPO::getType, baseRequestVO.getCommentType()).eq(CommentPO::getFloorCommentId, baseRequestVO.getFloorCommentId()).orderByAsc(CommentPO::getCreateTime).page(baseRequestVO);
             List<CommentPO> childCommentPOS = baseRequestVO.getRecords();
             if (CollectionUtils.isEmpty(childCommentPOS)) {
-                return PoetryResult.success(baseRequestVO);
+                return ActResult.success(baseRequestVO);
             }
             List<CommentVO> ccVO = childCommentPOS.stream().map(cc -> buildCommentVO(cc)).collect(Collectors.toList());
             baseRequestVO.setRecords(ccVO);
         }
-        return PoetryResult.success(baseRequestVO);
+        return ActResult.success(baseRequestVO);
     }
 
     @Override
-    public PoetryResult<Page> listAdminComment(BaseRequestVO baseRequestVO, Boolean isBoss) {
+    public ActResult<Page> listAdminComment(BaseRequestVO baseRequestVO, Boolean isBoss) {
         LambdaQueryChainWrapper<CommentPO> wrapper = lambdaQuery();
         if (isBoss) {
             if (baseRequestVO.getSource() != null) {
@@ -171,7 +171,7 @@ public class CommentPowPro extends ServiceImpl<CommentMapper, CommentPO> impleme
                 wrapper.orderByDesc(CommentPO::getCreateTime).page(baseRequestVO);
             }
         }
-        return PoetryResult.success(baseRequestVO);
+        return ActResult.success(baseRequestVO);
     }
 
     private CommentVO buildCommentVO(CommentPO c) {

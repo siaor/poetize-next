@@ -3,13 +3,13 @@ package com.siaor.poetize.next.app.api.im;
 
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.siaor.poetize.next.repo.po.UserPO;
-import com.siaor.poetize.next.res.aop.LoginCheck;
-import com.siaor.poetize.next.res.config.PoetryResult;
-import com.siaor.poetize.next.repo.po.im.ChatUserMessagePO;
+import com.siaor.poetize.next.res.repo.po.UserPO;
+import com.siaor.poetize.next.res.oper.aop.LoginCheck;
+import com.siaor.poetize.next.res.norm.ActResult;
+import com.siaor.poetize.next.res.repo.po.im.ChatUserMessagePO;
 import com.siaor.poetize.next.pow.im.ImChatUserMessagePow;
 import com.siaor.poetize.next.app.vo.im.UserMessageVO;
-import com.siaor.poetize.next.res.websocket.ImConfigConst;
+import com.siaor.poetize.next.res.norm.im.ImConfigConst;
 import com.siaor.poetize.next.res.utils.CommonQuery;
 import com.siaor.poetize.next.res.utils.PoetryUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,8 +46,8 @@ public class ImChatUserMessageApi {
      */
     @GetMapping("/listSystemMessage")
     @LoginCheck
-    public PoetryResult<Page> listSystemMessage(@RequestParam(value = "current", defaultValue = "1") Long current,
-                                                @RequestParam(value = "size", defaultValue = "10") Long size) {
+    public ActResult<Page> listSystemMessage(@RequestParam(value = "current", defaultValue = "1") Long current,
+                                             @RequestParam(value = "size", defaultValue = "10") Long size) {
         Page<ChatUserMessagePO> page = new Page<>();
         page.setCurrent(current);
         page.setSize(size);
@@ -62,7 +62,7 @@ public class ImChatUserMessageApi {
         List<ChatUserMessagePO> records = result.getRecords();
         Collections.reverse(records);
         if (CollectionUtils.isEmpty(records)) {
-            return PoetryResult.success(result);
+            return ActResult.success(result);
         } else {
             List<UserMessageVO> collect = records.stream().map(message -> {
                 UserMessageVO userMessageVO = new UserMessageVO();
@@ -76,7 +76,7 @@ public class ImChatUserMessageApi {
             resultVO.setTotal(result.getTotal());
             resultVO.setCurrent(result.getCurrent());
             resultVO.setSize(result.getSize());
-            return PoetryResult.success(resultVO);
+            return ActResult.success(resultVO);
         }
     }
 
@@ -86,14 +86,14 @@ public class ImChatUserMessageApi {
      */
     @GetMapping("/saveSystemMessage")
     @LoginCheck(0)
-    public PoetryResult saveSystemMessage(@RequestParam("content") String content) {
+    public ActResult saveSystemMessage(@RequestParam("content") String content) {
         ChatUserMessagePO userMessage = new ChatUserMessagePO();
         userMessage.setContent(content);
         userMessage.setFromId(ImConfigConst.DEFAULT_SYSTEM_MESSAGE_ID);
         userMessage.setToId(ImConfigConst.DEFAULT_SYSTEM_MESSAGE_ID);
         userMessage.setMessageStatus(ImConfigConst.USER_MESSAGE_STATUS_TRUE);
         imChatUserMessagePow.save(userMessage);
-        return PoetryResult.success();
+        return ActResult.success();
     }
 
 
@@ -102,9 +102,9 @@ public class ImChatUserMessageApi {
      */
     @GetMapping("/deleteSystemMessage")
     @LoginCheck(0)
-    public PoetryResult deleteSystemMessage(@RequestParam("id") Integer id) {
+    public ActResult deleteSystemMessage(@RequestParam("id") Integer id) {
         imChatUserMessagePow.removeById(id);
-        return PoetryResult.success();
+        return ActResult.success();
     }
 
     /**
@@ -112,9 +112,9 @@ public class ImChatUserMessageApi {
      */
     @GetMapping("/listFriendMessage")
     @LoginCheck
-    public PoetryResult<Page> listFriendMessage(@RequestParam(value = "current", defaultValue = "1") Long current,
-                                                @RequestParam(value = "size", defaultValue = "40") Long size,
-                                                @RequestParam(value = "friendId") Integer friendId) {
+    public ActResult<Page> listFriendMessage(@RequestParam(value = "current", defaultValue = "1") Long current,
+                                             @RequestParam(value = "size", defaultValue = "40") Long size,
+                                             @RequestParam(value = "friendId") Integer friendId) {
         Page<ChatUserMessagePO> page = new Page<>();
         page.setCurrent(current);
         page.setSize(size);
@@ -129,7 +129,7 @@ public class ImChatUserMessageApi {
         List<ChatUserMessagePO> records = result.getRecords();
         Collections.reverse(records);
         if (CollectionUtils.isEmpty(records)) {
-            return PoetryResult.success(result);
+            return ActResult.success(result);
         } else {
             List<UserMessageVO> collect = records.stream().map(message -> {
                 UserMessageVO userMessageVO = new UserMessageVO();
@@ -150,7 +150,7 @@ public class ImChatUserMessageApi {
             resultVO.setTotal(result.getTotal());
             resultVO.setCurrent(result.getCurrent());
             resultVO.setSize(result.getSize());
-            return PoetryResult.success(resultVO);
+            return ActResult.success(resultVO);
         }
     }
 }

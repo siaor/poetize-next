@@ -1,7 +1,7 @@
 package com.siaor.poetize.next.pro;
 
-import com.siaor.poetize.next.repo.po.HistoryInfoPO;
-import com.siaor.poetize.next.repo.mapper.HistoryInfoMapper;
+import com.siaor.poetize.next.res.repo.po.HistoryInfoPO;
+import com.siaor.poetize.next.res.repo.mapper.HistoryInfoMapper;
 import com.siaor.poetize.next.pow.HistoryInfoPow;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;

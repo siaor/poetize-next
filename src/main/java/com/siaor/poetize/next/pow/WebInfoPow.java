@@ -1,6 +1,6 @@
 package com.siaor.poetize.next.pow;
 
-import com.siaor.poetize.next.repo.po.WebInfoPO;
+import com.siaor.poetize.next.res.repo.po.WebInfoPO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**

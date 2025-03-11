@@ -3,17 +3,17 @@ package com.siaor.poetize.next.app.api.im;
 
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.siaor.poetize.next.repo.po.UserPO;
-import com.siaor.poetize.next.res.aop.LoginCheck;
-import com.siaor.poetize.next.res.config.PoetryResult;
-import com.siaor.poetize.next.repo.po.im.ChatGroupPO;
-import com.siaor.poetize.next.repo.po.im.ChatGroupUserPO;
-import com.siaor.poetize.next.repo.po.im.ChatUserGroupMessagePO;
+import com.siaor.poetize.next.res.repo.po.UserPO;
+import com.siaor.poetize.next.res.oper.aop.LoginCheck;
+import com.siaor.poetize.next.res.norm.ActResult;
+import com.siaor.poetize.next.res.repo.po.im.ChatGroupPO;
+import com.siaor.poetize.next.res.repo.po.im.ChatGroupUserPO;
+import com.siaor.poetize.next.res.repo.po.im.ChatUserGroupMessagePO;
 import com.siaor.poetize.next.pow.im.ImChatGroupPow;
 import com.siaor.poetize.next.pow.im.ImChatGroupUserPow;
 import com.siaor.poetize.next.pow.im.ImChatUserGroupMessagePow;
 import com.siaor.poetize.next.app.vo.im.GroupMessageVO;
-import com.siaor.poetize.next.res.websocket.ImConfigConst;
+import com.siaor.poetize.next.res.norm.im.ImConfigConst;
 import com.siaor.poetize.next.res.utils.CommonQuery;
 import com.siaor.poetize.next.res.utils.PoetryUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,9 +56,9 @@ public class ImChatUserGroupMessageApi {
      */
     @GetMapping("/listGroupMessage")
     @LoginCheck
-    public PoetryResult<Page> listGroupMessage(@RequestParam(value = "current", defaultValue = "1") Long current,
-                                               @RequestParam(value = "size", defaultValue = "40") Long size,
-                                               @RequestParam(value = "groupId") Integer groupId) {
+    public ActResult<Page> listGroupMessage(@RequestParam(value = "current", defaultValue = "1") Long current,
+                                            @RequestParam(value = "size", defaultValue = "40") Long size,
+                                            @RequestParam(value = "groupId") Integer groupId) {
         Page<ChatUserGroupMessagePO> page = new Page<>();
         page.setCurrent(current);
         page.setSize(size);
@@ -67,7 +67,7 @@ public class ImChatUserGroupMessageApi {
 
         ChatGroupPO chatGroup = imChatGroupPow.getById(groupId);
         if (chatGroup == null) {
-            return PoetryResult.fail("群组不存在！");
+            return ActResult.fail("群组不存在！");
         }
 
         if (chatGroup.getGroupType().intValue() == ImConfigConst.GROUP_COMMON) {
@@ -77,7 +77,7 @@ public class ImChatUserGroupMessageApi {
             groupLambdaQuery.in(ChatGroupUserPO::getUserStatus, ImConfigConst.GROUP_USER_STATUS_PASS, ImConfigConst.GROUP_USER_STATUS_SILENCE);
             Integer count = groupLambdaQuery.count().intValue();
             if (count < 1) {
-                return PoetryResult.fail("未加群！");
+                return ActResult.fail("未加群！");
             }
         }
 
@@ -88,7 +88,7 @@ public class ImChatUserGroupMessageApi {
         List<ChatUserGroupMessagePO> records = result.getRecords();
         Collections.reverse(records);
         if (CollectionUtils.isEmpty(records)) {
-            return PoetryResult.success(result);
+            return ActResult.success(result);
         } else {
             List<GroupMessageVO> collect = records.stream().map(message -> {
                 GroupMessageVO groupMessageVO = new GroupMessageVO();
@@ -111,7 +111,7 @@ public class ImChatUserGroupMessageApi {
             resultVO.setTotal(result.getTotal());
             resultVO.setCurrent(result.getCurrent());
             resultVO.setSize(result.getSize());
-            return PoetryResult.success(resultVO);
+            return ActResult.success(resultVO);
         }
     }
 }

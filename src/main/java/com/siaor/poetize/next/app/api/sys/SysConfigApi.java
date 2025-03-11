@@ -2,10 +2,10 @@ package com.siaor.poetize.next.app.api.sys;
 
 
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
-import com.siaor.poetize.next.res.aop.LoginCheck;
-import com.siaor.poetize.next.res.config.PoetryResult;
-import com.siaor.poetize.next.repo.po.SysConfigPO;
-import com.siaor.poetize.next.res.enums.SysEnum;
+import com.siaor.poetize.next.res.oper.aop.LoginCheck;
+import com.siaor.poetize.next.res.norm.ActResult;
+import com.siaor.poetize.next.res.repo.po.SysConfigPO;
+import com.siaor.poetize.next.res.norm.SysEnum;
 import com.siaor.poetize.next.pow.SysConfigPow;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -34,12 +34,12 @@ public class SysConfigApi {
      * 查询系统参数
      */
     @GetMapping("/listSysConfig")
-    public PoetryResult<Map<String, String>> listSysConfig() {
+    public ActResult<Map<String, String>> listSysConfig() {
         LambdaQueryChainWrapper<SysConfigPO> wrapper = new LambdaQueryChainWrapper<>(sysConfigPow.getBaseMapper());
         List<SysConfigPO> sysConfigs = wrapper.eq(SysConfigPO::getConfigType, Integer.toString(SysEnum.SYS_CONFIG_PUBLIC.getCode()))
                 .list();
         Map<String, String> collect = sysConfigs.stream().collect(Collectors.toMap(SysConfigPO::getConfigKey, SysConfigPO::getConfigValue));
-        return PoetryResult.success(collect);
+        return ActResult.success(collect);
     }
 
     /**
@@ -47,19 +47,19 @@ public class SysConfigApi {
      */
     @PostMapping("/saveOrUpdateConfig")
     @LoginCheck(0)
-    public PoetryResult saveConfig(@RequestBody SysConfigPO sysConfigPO) {
+    public ActResult saveConfig(@RequestBody SysConfigPO sysConfigPO) {
         if (!StringUtils.hasText(sysConfigPO.getConfigName()) ||
                 !StringUtils.hasText(sysConfigPO.getConfigKey()) ||
                 !StringUtils.hasText(sysConfigPO.getConfigType())) {
-            return PoetryResult.fail("请完善所有配置信息！");
+            return ActResult.fail("请完善所有配置信息！");
         }
         String configType = sysConfigPO.getConfigType();
         if (!Integer.toString(SysEnum.SYS_CONFIG_PUBLIC.getCode()).equals(configType) &&
                 !Integer.toString(SysEnum.SYS_CONFIG_PRIVATE.getCode()).equals(configType)) {
-            return PoetryResult.fail("配置类型不正确！");
+            return ActResult.fail("配置类型不正确！");
         }
         sysConfigPow.saveOrUpdate(sysConfigPO);
-        return PoetryResult.success();
+        return ActResult.success();
     }
 
     /**
@@ -67,9 +67,9 @@ public class SysConfigApi {
      */
     @GetMapping("/deleteConfig")
     @LoginCheck(0)
-    public PoetryResult deleteConfig(@RequestParam("id") Integer id) {
+    public ActResult deleteConfig(@RequestParam("id") Integer id) {
         sysConfigPow.removeById(id);
-        return PoetryResult.success();
+        return ActResult.success();
     }
 
     /**
@@ -77,7 +77,7 @@ public class SysConfigApi {
      */
     @GetMapping("/listConfig")
     @LoginCheck(0)
-    public PoetryResult<List<SysConfigPO>> listConfig() {
-        return PoetryResult.success(new LambdaQueryChainWrapper<>(sysConfigPow.getBaseMapper()).list());
+    public ActResult<List<SysConfigPO>> listConfig() {
+        return ActResult.success(new LambdaQueryChainWrapper<>(sysConfigPow.getBaseMapper()).list());
     }
 }

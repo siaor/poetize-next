@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.siaor.poetize.next.repo.mapper.ResourcePathMapper">
+<mapper namespace="com.siaor.poetize.next.res.repo.mapper.ResourcePathMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.siaor.poetize.next.repo.po.ResourcePathPO">
+    <resultMap id="BaseResultMap" type="com.siaor.poetize.next.res.repo.po.ResourcePathPO">
         <id column="id" property="id"/>
         <result column="title" property="title"/>
         <result column="classify" property="classify"/>

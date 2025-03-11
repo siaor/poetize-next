@@ -1,12 +1,12 @@
 package com.siaor.poetize.next.app.api.blog;
 
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
-import com.siaor.poetize.next.res.aop.LoginCheck;
-import com.siaor.poetize.next.res.aop.SaveCheck;
-import com.siaor.poetize.next.res.config.PoetryResult;
-import com.siaor.poetize.next.res.constants.CommonConst;
-import com.siaor.poetize.next.repo.mapper.ResourcePathMapper;
-import com.siaor.poetize.next.repo.po.ResourcePathPO;
+import com.siaor.poetize.next.res.oper.aop.LoginCheck;
+import com.siaor.poetize.next.res.oper.aop.SaveCheck;
+import com.siaor.poetize.next.res.norm.ActResult;
+import com.siaor.poetize.next.res.norm.CommonConst;
+import com.siaor.poetize.next.res.repo.mapper.ResourcePathMapper;
+import com.siaor.poetize.next.res.repo.po.ResourcePathPO;
 import com.siaor.poetize.next.res.utils.PoetryUtil;
 import com.siaor.poetize.next.app.vo.ResourcePathVO;
 import org.springframework.beans.BeanUtils;
@@ -41,10 +41,10 @@ public class FriendApi {
     @LoginCheck
     @PostMapping("/saveFriend")
     @SaveCheck
-    public PoetryResult saveFriend(@RequestBody ResourcePathVO resourcePathVO) {
+    public ActResult saveFriend(@RequestBody ResourcePathVO resourcePathVO) {
         if (!StringUtils.hasText(resourcePathVO.getTitle()) || !StringUtils.hasText(resourcePathVO.getCover()) ||
                 !StringUtils.hasText(resourcePathVO.getUrl()) || !StringUtils.hasText(resourcePathVO.getIntroduction())) {
-            return PoetryResult.fail("信息不全！");
+            return ActResult.fail("信息不全！");
         }
         ResourcePathPO friend = new ResourcePathPO();
         friend.setClassify(CommonConst.DEFAULT_FRIEND);
@@ -56,14 +56,14 @@ public class FriendApi {
         friend.setType(CommonConst.RESOURCE_PATH_TYPE_FRIEND);
         friend.setStatus(Boolean.FALSE);
         resourcePathMapper.insert(friend);
-        return PoetryResult.success();
+        return ActResult.success();
     }
 
     /**
      * 查询友链
      */
     @GetMapping("/listFriend")
-    public PoetryResult<Map<String, List<ResourcePathVO>>> listFriend() {
+    public ActResult<Map<String, List<ResourcePathVO>>> listFriend() {
         LambdaQueryChainWrapper<ResourcePathPO> wrapper = new LambdaQueryChainWrapper<>(resourcePathMapper);
         List<ResourcePathPO> resourcePathPOS = wrapper.eq(ResourcePathPO::getType, CommonConst.RESOURCE_PATH_TYPE_FRIEND)
                 .eq(ResourcePathPO::getStatus, Boolean.TRUE)
@@ -77,6 +77,6 @@ public class FriendApi {
                 return resourcePathVO;
             }).collect(Collectors.groupingBy(ResourcePathVO::getClassify));
         }
-        return PoetryResult.success(collect);
+        return ActResult.success(collect);
     }
 }

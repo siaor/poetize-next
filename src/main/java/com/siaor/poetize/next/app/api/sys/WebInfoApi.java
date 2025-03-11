@@ -2,16 +2,16 @@ package com.siaor.poetize.next.app.api.sys;
 
 
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
-import com.siaor.poetize.next.res.aop.LoginCheck;
-import com.siaor.poetize.next.res.config.PoetryResult;
-import com.siaor.poetize.next.res.constants.CommonConst;
-import com.siaor.poetize.next.repo.mapper.HistoryInfoMapper;
-import com.siaor.poetize.next.repo.po.HistoryInfoPO;
-import com.siaor.poetize.next.repo.po.UserPO;
-import com.siaor.poetize.next.repo.po.WebInfoPO;
+import com.siaor.poetize.next.res.oper.aop.LoginCheck;
+import com.siaor.poetize.next.res.norm.ActResult;
+import com.siaor.poetize.next.res.norm.CommonConst;
+import com.siaor.poetize.next.res.repo.mapper.HistoryInfoMapper;
+import com.siaor.poetize.next.res.repo.po.HistoryInfoPO;
+import com.siaor.poetize.next.res.repo.po.UserPO;
+import com.siaor.poetize.next.res.repo.po.WebInfoPO;
 import com.siaor.poetize.next.pow.WebInfoPow;
 import com.siaor.poetize.next.res.utils.CommonQuery;
-import com.siaor.poetize.next.res.utils.cache.PoetryCache;
+import com.siaor.poetize.next.res.repo.cache.SysCache;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -54,16 +54,16 @@ public class WebInfoApi {
      */
     @LoginCheck(0)
     @PostMapping("/updateWebInfo")
-    public PoetryResult<WebInfoPO> updateWebInfo(@RequestBody WebInfoPO webInfoPO) {
+    public ActResult<WebInfoPO> updateWebInfo(@RequestBody WebInfoPO webInfoPO) {
         webInfoPow.updateById(webInfoPO);
 
         LambdaQueryChainWrapper<WebInfoPO> wrapper = new LambdaQueryChainWrapper<>(webInfoPow.getBaseMapper());
         List<WebInfoPO> list = wrapper.list();
         if (!CollectionUtils.isEmpty(list)) {
             list.get(0).setDefaultStoreType(defaultType);
-            PoetryCache.put(CommonConst.WEB_INFO, list.get(0));
+            SysCache.put(CommonConst.WEB_INFO, list.get(0));
         }
-        return PoetryResult.success();
+        return ActResult.success();
     }
 
 
@@ -71,8 +71,8 @@ public class WebInfoApi {
      * 获取网站信息
      */
     @GetMapping("/getWebInfo")
-    public PoetryResult<WebInfoPO> getWebInfo() {
-        WebInfoPO webInfoPO = (WebInfoPO) PoetryCache.get(CommonConst.WEB_INFO);
+    public ActResult<WebInfoPO> getWebInfo() {
+        WebInfoPO webInfoPO = (WebInfoPO) SysCache.get(CommonConst.WEB_INFO);
         if (webInfoPO != null) {
             WebInfoPO result = new WebInfoPO();
             BeanUtils.copyProperties(webInfoPO, result);
@@ -80,11 +80,11 @@ public class WebInfoApi {
             result.setRandomName(null);
             result.setWaifuJson(null);
 
-            webInfoPO.setHistoryAllCount(((Long) ((Map<String, Object>) PoetryCache.get(CommonConst.IP_HISTORY_STATISTICS)).get(CommonConst.IP_HISTORY_COUNT)).toString());
-            webInfoPO.setHistoryDayCount(Integer.toString(((List<Map<String, Object>>) ((Map<String, Object>) PoetryCache.get(CommonConst.IP_HISTORY_STATISTICS)).get(CommonConst.IP_HISTORY_HOUR)).size()));
-            return PoetryResult.success(result);
+            webInfoPO.setHistoryAllCount(((Long) ((Map<String, Object>) SysCache.get(CommonConst.IP_HISTORY_STATISTICS)).get(CommonConst.IP_HISTORY_COUNT)).toString());
+            webInfoPO.setHistoryDayCount(Integer.toString(((List<Map<String, Object>>) ((Map<String, Object>) SysCache.get(CommonConst.IP_HISTORY_STATISTICS)).get(CommonConst.IP_HISTORY_HOUR)).size()));
+            return ActResult.success(result);
         }
-        return PoetryResult.success();
+        return ActResult.success();
     }
 
     /**
@@ -92,10 +92,10 @@ public class WebInfoApi {
      */
     @LoginCheck(0)
     @GetMapping("/getHistoryInfo")
-    public PoetryResult<Map<String, Object>> getHistoryInfo() {
+    public ActResult<Map<String, Object>> getHistoryInfo() {
         Map<String, Object> result = new HashMap<>();
 
-        Map<String, Object> history = (Map<String, Object>) PoetryCache.get(CommonConst.IP_HISTORY_STATISTICS);
+        Map<String, Object> history = (Map<String, Object>) SysCache.get(CommonConst.IP_HISTORY_STATISTICS);
         List<HistoryInfoPO> infoList = new LambdaQueryChainWrapper<>(historyInfoMapper)
                 .select(HistoryInfoPO::getIp, HistoryInfoPO::getUserId, HistoryInfoPO::getNation, HistoryInfoPO::getProvince, HistoryInfoPO::getCity)
                 .ge(HistoryInfoPO::getCreateTime, LocalDateTime.now().with(LocalTime.MIN))
@@ -149,15 +149,15 @@ public class WebInfoApi {
 
         result.put("province_today", list);
 
-        return PoetryResult.success(result);
+        return ActResult.success(result);
     }
 
     /**
      * 获取赞赏
      */
     @GetMapping("/getAdmire")
-    public PoetryResult<List<UserPO>> getAdmire() {
-        return PoetryResult.success(commonQuery.getAdmire());
+    public ActResult<List<UserPO>> getAdmire() {
+        return ActResult.success(commonQuery.getAdmire());
     }
 
     /**
@@ -165,7 +165,7 @@ public class WebInfoApi {
      */
     @GetMapping("/getWaifuJson")
     public String getWaifuJson() {
-        WebInfoPO webInfoPO = (WebInfoPO) PoetryCache.get(CommonConst.WEB_INFO);
+        WebInfoPO webInfoPO = (WebInfoPO) SysCache.get(CommonConst.WEB_INFO);
         if (webInfoPO != null && StringUtils.hasText(webInfoPO.getWaifuJson())) {
             return webInfoPO.getWaifuJson();
         }

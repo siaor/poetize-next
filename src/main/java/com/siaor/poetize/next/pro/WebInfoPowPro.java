@@ -1,7 +1,7 @@
 package com.siaor.poetize.next.pro;
 
-import com.siaor.poetize.next.repo.po.WebInfoPO;
-import com.siaor.poetize.next.repo.mapper.WebInfoMapper;
+import com.siaor.poetize.next.res.repo.po.WebInfoPO;
+import com.siaor.poetize.next.res.repo.mapper.WebInfoMapper;
 import com.siaor.poetize.next.pow.WebInfoPow;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;

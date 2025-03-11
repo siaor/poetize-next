@@ -1,6 +1,6 @@
 package com.siaor.poetize.next.res.utils.storage;
 
-import com.siaor.poetize.next.res.handle.PoetryRuntimeException;
+import com.siaor.poetize.next.res.norm.exception.SysRuntimeException;
 import org.springframework.util.StringUtils;
 
 public enum StoreEnum {
@@ -27,6 +27,6 @@ public enum StoreEnum {
                 }
             }
         }
-        throw new PoetryRuntimeException("存储平台不支持：" + code);
+        throw new SysRuntimeException("存储平台不支持：" + code);
     }
 }

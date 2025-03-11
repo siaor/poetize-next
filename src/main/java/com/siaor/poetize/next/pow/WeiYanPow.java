@@ -1,6 +1,6 @@
 package com.siaor.poetize.next.pow;
 
-import com.siaor.poetize.next.repo.po.WeiYanPO;
+import com.siaor.poetize.next.res.repo.po.WeiYanPO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**

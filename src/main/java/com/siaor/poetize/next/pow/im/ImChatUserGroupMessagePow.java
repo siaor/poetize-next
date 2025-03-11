@@ -1,6 +1,6 @@
 package com.siaor.poetize.next.pow.im;
 
-import com.siaor.poetize.next.repo.po.im.ChatUserGroupMessagePO;
+import com.siaor.poetize.next.res.repo.po.im.ChatUserGroupMessagePO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**

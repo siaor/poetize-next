@@ -1,12 +1,12 @@
 package com.siaor.poetize.next.app.api.blog;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.siaor.poetize.next.res.aop.LoginCheck;
-import com.siaor.poetize.next.res.aop.SaveCheck;
-import com.siaor.poetize.next.res.config.PoetryResult;
-import com.siaor.poetize.next.res.constants.CommonConst;
-import com.siaor.poetize.next.repo.mapper.ResourcePathMapper;
-import com.siaor.poetize.next.repo.po.ResourcePathPO;
+import com.siaor.poetize.next.res.oper.aop.LoginCheck;
+import com.siaor.poetize.next.res.oper.aop.SaveCheck;
+import com.siaor.poetize.next.res.norm.ActResult;
+import com.siaor.poetize.next.res.norm.CommonConst;
+import com.siaor.poetize.next.res.repo.mapper.ResourcePathMapper;
+import com.siaor.poetize.next.res.repo.po.ResourcePathPO;
 import com.siaor.poetize.next.app.vo.ResourcePathVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -34,14 +34,14 @@ public class MusicApi {
      * 查询音乐
      */
     @GetMapping("/listFunny")
-    public PoetryResult<List<Map<String, Object>>> listFunny() {
+    public ActResult<List<Map<String, Object>>> listFunny() {
         QueryWrapper<ResourcePathPO> queryWrapper = new QueryWrapper<>();
         queryWrapper.select("classify, count(*) as count")
                 .eq("status", Boolean.TRUE)
                 .eq("type", CommonConst.RESOURCE_PATH_TYPE_FUNNY)
                 .groupBy("classify");
         List<Map<String, Object>> maps = resourcePathMapper.selectMaps(queryWrapper);
-        return PoetryResult.success(maps);
+        return ActResult.success(maps);
     }
 
     /**
@@ -50,10 +50,10 @@ public class MusicApi {
     @LoginCheck
     @SaveCheck
     @PostMapping("/saveFunny")
-    public PoetryResult saveFunny(@RequestBody ResourcePathVO resourcePathVO) {
+    public ActResult saveFunny(@RequestBody ResourcePathVO resourcePathVO) {
         if (!StringUtils.hasText(resourcePathVO.getClassify()) || !StringUtils.hasText(resourcePathVO.getCover()) ||
                 !StringUtils.hasText(resourcePathVO.getUrl()) || !StringUtils.hasText(resourcePathVO.getTitle())) {
-            return PoetryResult.fail("信息不全！");
+            return ActResult.fail("信息不全！");
         }
         ResourcePathPO funny = new ResourcePathPO();
         funny.setClassify(resourcePathVO.getClassify());
@@ -63,6 +63,6 @@ public class MusicApi {
         funny.setType(CommonConst.RESOURCE_PATH_TYPE_FUNNY);
         funny.setStatus(Boolean.FALSE);
         resourcePathMapper.insert(funny);
-        return PoetryResult.success();
+        return ActResult.success();
     }
 }

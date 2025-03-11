@@ -2,13 +2,13 @@ package com.siaor.poetize.next.app.api.blog;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.siaor.poetize.next.res.aop.LoginCheck;
-import com.siaor.poetize.next.res.config.PoetryResult;
-import com.siaor.poetize.next.res.constants.CommonConst;
+import com.siaor.poetize.next.res.oper.aop.LoginCheck;
+import com.siaor.poetize.next.res.norm.ActResult;
+import com.siaor.poetize.next.res.norm.CommonConst;
 import com.siaor.poetize.next.pow.ArticlePow;
 import com.siaor.poetize.next.res.utils.PoetryUtil;
-import com.siaor.poetize.next.res.utils.cache.PoetryCache;
-import com.siaor.poetize.next.res.utils.storage.ArticleScanTask;
+import com.siaor.poetize.next.res.repo.cache.SysCache;
+import com.siaor.poetize.next.res.task.ArticleScanTask;
 import com.siaor.poetize.next.app.vo.ArticleVO;
 import com.siaor.poetize.next.app.vo.BaseRequestVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,10 +43,10 @@ public class ArticleApi {
      */
     @LoginCheck(1)
     @PostMapping("/saveArticle")
-    public PoetryResult saveArticle(@Validated @RequestBody ArticleVO articleVO) {
-        PoetryCache.remove(CommonConst.USER_ARTICLE_LIST + PoetryUtil.getUserId().toString());
-        PoetryCache.remove(CommonConst.ARTICLE_LIST);
-        PoetryCache.remove(CommonConst.SORT_ARTICLE_LIST);
+    public ActResult saveArticle(@Validated @RequestBody ArticleVO articleVO) {
+        SysCache.remove(CommonConst.USER_ARTICLE_LIST + PoetryUtil.getUserId().toString());
+        SysCache.remove(CommonConst.ARTICLE_LIST);
+        SysCache.remove(CommonConst.SORT_ARTICLE_LIST);
         return articlePow.saveArticle(articleVO);
     }
 
@@ -56,10 +56,10 @@ public class ArticleApi {
      */
     @GetMapping("/deleteArticle")
     @LoginCheck(1)
-    public PoetryResult deleteArticle(@RequestParam("id") Integer id) {
-        PoetryCache.remove(CommonConst.USER_ARTICLE_LIST + PoetryUtil.getUserId().toString());
-        PoetryCache.remove(CommonConst.ARTICLE_LIST);
-        PoetryCache.remove(CommonConst.SORT_ARTICLE_LIST);
+    public ActResult deleteArticle(@RequestParam("id") Integer id) {
+        SysCache.remove(CommonConst.USER_ARTICLE_LIST + PoetryUtil.getUserId().toString());
+        SysCache.remove(CommonConst.ARTICLE_LIST);
+        SysCache.remove(CommonConst.SORT_ARTICLE_LIST);
         return articlePow.deleteArticle(id);
     }
 
@@ -69,9 +69,9 @@ public class ArticleApi {
      */
     @PostMapping("/updateArticle")
     @LoginCheck(1)
-    public PoetryResult updateArticle(@Validated @RequestBody ArticleVO articleVO) {
-        PoetryCache.remove(CommonConst.ARTICLE_LIST);
-        PoetryCache.remove(CommonConst.SORT_ARTICLE_LIST);
+    public ActResult updateArticle(@Validated @RequestBody ArticleVO articleVO) {
+        SysCache.remove(CommonConst.ARTICLE_LIST);
+        SysCache.remove(CommonConst.SORT_ARTICLE_LIST);
         return articlePow.updateArticle(articleVO);
     }
 
@@ -83,14 +83,14 @@ public class ArticleApi {
      */
     @PostMapping("/reload")
     @LoginCheck(1)
-    public PoetryResult reloadArticle() {
-        PoetryCache.remove(CommonConst.USER_ARTICLE_LIST + PoetryUtil.getUserId().toString());
-        PoetryCache.remove(CommonConst.ARTICLE_LIST);
-        PoetryCache.remove(CommonConst.SORT_ARTICLE_LIST);
+    public ActResult reloadArticle() {
+        SysCache.remove(CommonConst.USER_ARTICLE_LIST + PoetryUtil.getUserId().toString());
+        SysCache.remove(CommonConst.ARTICLE_LIST);
+        SysCache.remove(CommonConst.SORT_ARTICLE_LIST);
         //判断重载任务是否处理完毕
         int taskSize = articleScanTask.getSize();
         if (taskSize > 0) {
-            return PoetryResult.success("正在重载数据中，剩余：" + taskSize);
+            return ActResult.success("正在重载数据中，剩余：" + taskSize);
         }
         return articlePow.reload();
     }
@@ -103,15 +103,15 @@ public class ArticleApi {
      */
     @GetMapping("/reload/task")
     @LoginCheck(1)
-    public PoetryResult getReloadTask() {
-        return PoetryResult.success(articleScanTask.getSize());
+    public ActResult getReloadTask() {
+        return ActResult.success(articleScanTask.getSize());
     }
 
     /**
      * 查询文章List
      */
     @PostMapping("/listArticle")
-    public PoetryResult<Page> listArticle(@RequestBody BaseRequestVO baseRequestVO) {
+    public ActResult<Page> listArticle(@RequestBody BaseRequestVO baseRequestVO) {
         return articlePow.listArticle(baseRequestVO);
     }
 
@@ -119,7 +119,7 @@ public class ArticleApi {
      * 查询分类文章List
      */
     @GetMapping("/listSortArticle")
-    public PoetryResult<Map<Integer, List<ArticleVO>>> listSortArticle() {
+    public ActResult<Map<Integer, List<ArticleVO>>> listSortArticle() {
         return articlePow.listSortArticle();
     }
 
@@ -127,7 +127,7 @@ public class ArticleApi {
      * 查询文章
      */
     @GetMapping("/getArticleById")
-    public PoetryResult<ArticleVO> getArticleById(@RequestParam("id") Integer id, @RequestParam(value = "password", required = false) String password) {
+    public ActResult<ArticleVO> getArticleById(@RequestParam("id") Integer id, @RequestParam(value = "password", required = false) String password) {
         return articlePow.getArticleById(id, password);
     }
 }

@@ -1,13 +1,13 @@
 package com.siaor.poetize.next.app.api.blog;
 
 
-import com.siaor.poetize.next.res.aop.LoginCheck;
-import com.siaor.poetize.next.res.config.PoetryResult;
-import com.siaor.poetize.next.res.aop.SaveCheck;
+import com.siaor.poetize.next.res.oper.aop.LoginCheck;
+import com.siaor.poetize.next.res.norm.ActResult;
+import com.siaor.poetize.next.res.oper.aop.SaveCheck;
 import com.siaor.poetize.next.pow.CommentPow;
-import com.siaor.poetize.next.res.constants.CommonConst;
+import com.siaor.poetize.next.res.norm.CommonConst;
 import com.siaor.poetize.next.res.utils.CommonQuery;
-import com.siaor.poetize.next.res.utils.cache.PoetryCache;
+import com.siaor.poetize.next.res.repo.cache.SysCache;
 import com.siaor.poetize.next.res.utils.StringUtil;
 import com.siaor.poetize.next.app.vo.BaseRequestVO;
 import com.siaor.poetize.next.app.vo.CommentVO;
@@ -43,14 +43,14 @@ public class CommentApi {
     @PostMapping("/saveComment")
     @LoginCheck
     @SaveCheck
-    public PoetryResult saveComment(@Validated @RequestBody CommentVO commentVO) {
+    public ActResult saveComment(@Validated @RequestBody CommentVO commentVO) {
         String content = StringUtil.removeHtml(commentVO.getCommentContent());
         if (!StringUtils.hasText(content)) {
-            return PoetryResult.fail("评论内容不合法！");
+            return ActResult.fail("评论内容不合法！");
         }
         commentVO.setCommentContent(content);
 
-        PoetryCache.remove(CommonConst.COMMENT_COUNT_CACHE + commentVO.getSource().toString() + "_" + commentVO.getType());
+        SysCache.remove(CommonConst.COMMENT_COUNT_CACHE + commentVO.getSource().toString() + "_" + commentVO.getType());
         return commentPow.saveComment(commentVO);
     }
 
@@ -60,7 +60,7 @@ public class CommentApi {
      */
     @GetMapping("/deleteComment")
     @LoginCheck
-    public PoetryResult deleteComment(@RequestParam("id") Integer id) {
+    public ActResult deleteComment(@RequestParam("id") Integer id) {
         return commentPow.deleteComment(id);
     }
 
@@ -69,8 +69,8 @@ public class CommentApi {
      * 查询评论数量
      */
     @GetMapping("/getCommentCount")
-    public PoetryResult<Integer> getCommentCount(@RequestParam("source") Integer source, @RequestParam("type") String type) {
-        return PoetryResult.success(commonQuery.getCommentCount(source, type));
+    public ActResult<Integer> getCommentCount(@RequestParam("source") Integer source, @RequestParam("type") String type) {
+        return ActResult.success(commonQuery.getCommentCount(source, type));
     }
 
 
@@ -78,7 +78,7 @@ public class CommentApi {
      * 查询评论
      */
     @PostMapping("/listComment")
-    public PoetryResult<BaseRequestVO> listComment(@RequestBody BaseRequestVO baseRequestVO) {
+    public ActResult<BaseRequestVO> listComment(@RequestBody BaseRequestVO baseRequestVO) {
         return commentPow.listComment(baseRequestVO);
     }
 }

@@ -4,17 +4,17 @@ package com.siaor.poetize.next.app.api.im;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.siaor.poetize.next.repo.po.UserPO;
-import com.siaor.poetize.next.res.aop.LoginCheck;
-import com.siaor.poetize.next.res.config.PoetryResult;
-import com.siaor.poetize.next.repo.po.im.ChatGroupPO;
-import com.siaor.poetize.next.repo.po.im.ChatGroupUserPO;
+import com.siaor.poetize.next.res.repo.po.UserPO;
+import com.siaor.poetize.next.res.oper.aop.LoginCheck;
+import com.siaor.poetize.next.res.norm.ActResult;
+import com.siaor.poetize.next.res.repo.po.im.ChatGroupPO;
+import com.siaor.poetize.next.res.repo.po.im.ChatGroupUserPO;
 import com.siaor.poetize.next.pow.im.ImChatGroupPow;
 import com.siaor.poetize.next.pow.im.ImChatGroupUserPow;
 import com.siaor.poetize.next.app.vo.im.GroupUserVO;
-import com.siaor.poetize.next.res.websocket.ImConfigConst;
-import com.siaor.poetize.next.res.websocket.TioUtil;
-import com.siaor.poetize.next.res.websocket.TioWebsocketStarter;
+import com.siaor.poetize.next.res.norm.im.ImConfigConst;
+import com.siaor.poetize.next.res.utils.TioUtil;
+import com.siaor.poetize.next.res.oper.im.TioWebsocketStarter;
 import com.siaor.poetize.next.res.utils.CommonQuery;
 import com.siaor.poetize.next.res.utils.PoetryUtil;
 import org.springframework.beans.BeanUtils;
@@ -58,14 +58,14 @@ public class ImChatGroupUserApi {
      */
     @GetMapping("/enterGroup")
     @LoginCheck
-    public PoetryResult enterGroup(@RequestParam("id") Integer id, @RequestParam(value = "remark", required = false) String remark) {
+    public ActResult enterGroup(@RequestParam("id") Integer id, @RequestParam(value = "remark", required = false) String remark) {
         ChatGroupPO chatGroup = imChatGroupPow.getById(id);
         if (chatGroup == null) {
-            return PoetryResult.fail("群组不存在！");
+            return ActResult.fail("群组不存在！");
         }
 
         if (chatGroup.getGroupType().intValue() == ImConfigConst.GROUP_TOPIC) {
-            return PoetryResult.fail("话题无需申请！");
+            return ActResult.fail("话题无需申请！");
         }
 
         Integer userId = PoetryUtil.getUserId();
@@ -75,7 +75,7 @@ public class ImChatGroupUserApi {
         lambdaQuery.eq(ChatGroupUserPO::getUserId, userId);
         ChatGroupUserPO groupUser = lambdaQuery.one();
         if (groupUser != null) {
-            return PoetryResult.fail("重复申请！");
+            return ActResult.fail("重复申请！");
         }
 
         ChatGroupUserPO chatGroupUserPO = new ChatGroupUserPO();
@@ -96,7 +96,7 @@ public class ImChatGroupUserApi {
                 Tio.bindGroup(tioWebsocketStarter.getServerTioConfig(), String.valueOf(userId), String.valueOf(id));
             }
         }
-        return PoetryResult.success();
+        return ActResult.success();
     }
 
     /**
@@ -106,17 +106,17 @@ public class ImChatGroupUserApi {
      */
     @GetMapping("/changeUserStatus")
     @LoginCheck
-    public PoetryResult changeUserStatus(@RequestParam("groupId") Integer groupId,
-                                         @RequestParam("userId") Integer userId,
-                                         @RequestParam("userStatus") Integer userStatus,
-                                         @RequestParam("oldUserStatus") Integer oldUserStatus) {
+    public ActResult changeUserStatus(@RequestParam("groupId") Integer groupId,
+                                      @RequestParam("userId") Integer userId,
+                                      @RequestParam("userStatus") Integer userStatus,
+                                      @RequestParam("oldUserStatus") Integer oldUserStatus) {
         ChatGroupPO chatGroup = imChatGroupPow.getById(groupId);
         if (chatGroup == null) {
-            return PoetryResult.fail("群组不存在！");
+            return ActResult.fail("群组不存在！");
         }
 
         if (chatGroup.getGroupType().intValue() == ImConfigConst.GROUP_TOPIC) {
-            return PoetryResult.fail("话题无需操作！");
+            return ActResult.fail("话题无需操作！");
         }
 
         Integer currentUserId = PoetryUtil.getUserId();
@@ -126,7 +126,7 @@ public class ImChatGroupUserApi {
         lambdaQuery.eq(ChatGroupUserPO::getAdminFlag, ImConfigConst.ADMIN_FLAG_TRUE);
         ChatGroupUserPO groupUser = lambdaQuery.one();
         if (groupUser == null) {
-            return PoetryResult.fail("没有审核权限！");
+            return ActResult.fail("没有审核权限！");
         }
 
         boolean isSuccess;
@@ -164,9 +164,9 @@ public class ImChatGroupUserApi {
         }
 
         if (isSuccess) {
-            return PoetryResult.success();
+            return ActResult.success();
         } else {
-            return PoetryResult.fail("修改失败！");
+            return ActResult.fail("修改失败！");
         }
     }
 
@@ -178,21 +178,21 @@ public class ImChatGroupUserApi {
      */
     @GetMapping("/changeAdmin")
     @LoginCheck
-    public PoetryResult changeAdmin(@RequestParam("groupId") Integer groupId,
-                                    @RequestParam("userId") Integer userId,
-                                    @RequestParam("adminFlag") Boolean adminFlag) {
+    public ActResult changeAdmin(@RequestParam("groupId") Integer groupId,
+                                 @RequestParam("userId") Integer userId,
+                                 @RequestParam("adminFlag") Boolean adminFlag) {
         ChatGroupPO chatGroup = imChatGroupPow.getById(groupId);
         if (chatGroup == null) {
-            return PoetryResult.fail("群组不存在！");
+            return ActResult.fail("群组不存在！");
         }
 
         if (chatGroup.getGroupType().intValue() == ImConfigConst.GROUP_TOPIC) {
-            return PoetryResult.fail("话题无需操作！");
+            return ActResult.fail("话题无需操作！");
         }
 
         Integer currentUserId = PoetryUtil.getUserId();
         if (chatGroup.getMasterUserId().intValue() != currentUserId.intValue()) {
-            return PoetryResult.fail("群主才能设置管理员！");
+            return ActResult.fail("群主才能设置管理员！");
         }
 
         LambdaUpdateChainWrapper<ChatGroupUserPO> lambdaUpdate = imChatGroupUserPow.lambdaUpdate();
@@ -201,7 +201,7 @@ public class ImChatGroupUserApi {
         lambdaUpdate.set(ChatGroupUserPO::getAdminFlag, adminFlag);
 
         lambdaUpdate.update();
-        return PoetryResult.success();
+        return ActResult.success();
     }
 
     /**
@@ -209,14 +209,14 @@ public class ImChatGroupUserApi {
      */
     @GetMapping("/quitGroup")
     @LoginCheck
-    public PoetryResult quitGroup(@RequestParam("id") Integer id) {
+    public ActResult quitGroup(@RequestParam("id") Integer id) {
         ChatGroupPO chatGroup = imChatGroupPow.getById(id);
         if (chatGroup == null) {
-            return PoetryResult.fail("群组不存在！");
+            return ActResult.fail("群组不存在！");
         }
 
         if (chatGroup.getGroupType().intValue() == ImConfigConst.GROUP_TOPIC) {
-            return PoetryResult.fail("话题无需操作！");
+            return ActResult.fail("话题无需操作！");
         }
 
         Integer userId = PoetryUtil.getUserId();
@@ -253,7 +253,7 @@ public class ImChatGroupUserApi {
                 Tio.unbindGroup(tioWebsocketStarter.getServerTioConfig(), String.valueOf(userId), String.valueOf(id));
             }
         }
-        return PoetryResult.success();
+        return ActResult.success();
     }
 
     /**
@@ -261,10 +261,10 @@ public class ImChatGroupUserApi {
      */
     @GetMapping("/getGroupUserByStatus")
     @LoginCheck
-    public PoetryResult<Page> getGroupUserByStatus(@RequestParam(value = "groupId", required = false) Integer groupId,
-                                                   @RequestParam(value = "userStatus", required = false) Integer userStatus,
-                                                   @RequestParam(value = "current", defaultValue = "1") Long current,
-                                                   @RequestParam(value = "size", defaultValue = "20") Long size) {
+    public ActResult<Page> getGroupUserByStatus(@RequestParam(value = "groupId", required = false) Integer groupId,
+                                                @RequestParam(value = "userStatus", required = false) Integer userStatus,
+                                                @RequestParam(value = "current", defaultValue = "1") Long current,
+                                                @RequestParam(value = "size", defaultValue = "20") Long size) {
         Integer userId = PoetryUtil.getUserId();
         Page<ChatGroupUserPO> page = new Page<>();
         page.setCurrent(current);
@@ -273,11 +273,11 @@ public class ImChatGroupUserApi {
         if (groupId != null) {
             ChatGroupPO chatGroup = imChatGroupPow.getById(groupId);
             if (chatGroup == null) {
-                return PoetryResult.fail("群组不存在！");
+                return ActResult.fail("群组不存在！");
             }
 
             if (chatGroup.getGroupType().intValue() == ImConfigConst.GROUP_TOPIC) {
-                return PoetryResult.fail("话题没有用户！");
+                return ActResult.fail("话题没有用户！");
             }
 
             LambdaQueryChainWrapper<ChatGroupUserPO> groupLambdaQuery = imChatGroupUserPow.lambdaQuery();
@@ -286,7 +286,7 @@ public class ImChatGroupUserApi {
             groupLambdaQuery.eq(ChatGroupUserPO::getAdminFlag, ImConfigConst.ADMIN_FLAG_TRUE);
             ChatGroupUserPO groupUser = groupLambdaQuery.one();
             if (groupUser == null) {
-                return PoetryResult.fail("没有审核权限！");
+                return ActResult.fail("没有审核权限！");
             }
             lambdaQuery.eq(ChatGroupUserPO::getGroupId, groupId);
         } else {
@@ -296,7 +296,7 @@ public class ImChatGroupUserApi {
             List<ChatGroupUserPO> groupUsers = userLambdaQuery.list();
             if (CollectionUtils.isEmpty(groupUsers)) {
                 // 该用户没有管理任何群
-                return PoetryResult.success();
+                return ActResult.success();
             } else {
                 List<Integer> groupIds = groupUsers.stream().map(ChatGroupUserPO::getGroupId).collect(Collectors.toList());
                 lambdaQuery.in(ChatGroupUserPO::getGroupId, groupIds);
@@ -334,7 +334,7 @@ public class ImChatGroupUserApi {
         result.setTotal(page.getTotal());
         result.setCurrent(page.getCurrent());
         result.setSize(page.getSize());
-        return PoetryResult.success(result);
+        return ActResult.success(result);
     }
 
     /**
@@ -342,16 +342,16 @@ public class ImChatGroupUserApi {
      */
     @GetMapping("/getGroupUser")
     @LoginCheck
-    public PoetryResult<Page> getGroupUser(@RequestParam("groupId") Integer groupId,
-                                           @RequestParam(value = "current", defaultValue = "1") Long current,
-                                           @RequestParam(value = "size", defaultValue = "20") Long size) {
+    public ActResult<Page> getGroupUser(@RequestParam("groupId") Integer groupId,
+                                        @RequestParam(value = "current", defaultValue = "1") Long current,
+                                        @RequestParam(value = "size", defaultValue = "20") Long size) {
         ChatGroupPO chatGroup = imChatGroupPow.getById(groupId);
         if (chatGroup == null) {
-            return PoetryResult.fail("群组不存在！");
+            return ActResult.fail("群组不存在！");
         }
 
         if (chatGroup.getGroupType().intValue() == ImConfigConst.GROUP_TOPIC) {
-            return PoetryResult.fail("话题没有用户！");
+            return ActResult.fail("话题没有用户！");
         }
 
         Integer userId = PoetryUtil.getUserId();
@@ -361,7 +361,7 @@ public class ImChatGroupUserApi {
         wrapper.in(ChatGroupUserPO::getUserStatus, ImConfigConst.GROUP_USER_STATUS_PASS, ImConfigConst.GROUP_USER_STATUS_SILENCE);
         Integer count = wrapper.count().intValue();
         if (count < 1) {
-            return PoetryResult.fail("未加群！");
+            return ActResult.fail("未加群！");
         }
 
         Page<ChatGroupUserPO> page = new Page<>();
@@ -391,7 +391,7 @@ public class ImChatGroupUserApi {
         result.setTotal(page.getTotal());
         result.setCurrent(page.getCurrent());
         result.setSize(page.getSize());
-        return PoetryResult.success(result);
+        return ActResult.success(result);
     }
 }
 

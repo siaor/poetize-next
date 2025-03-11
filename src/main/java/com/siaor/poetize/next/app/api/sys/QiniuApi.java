@@ -1,8 +1,8 @@
 package com.siaor.poetize.next.app.api.sys;
 
-import com.siaor.poetize.next.res.aop.LoginCheck;
-import com.siaor.poetize.next.res.config.PoetryResult;
-import com.siaor.poetize.next.res.aop.SaveCheck;
+import com.siaor.poetize.next.res.oper.aop.LoginCheck;
+import com.siaor.poetize.next.res.norm.ActResult;
+import com.siaor.poetize.next.res.oper.aop.SaveCheck;
 import com.siaor.poetize.next.res.utils.storage.QiniuUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -28,7 +28,7 @@ public class QiniuApi {
     @GetMapping("/getUpToken")
     @LoginCheck
     @SaveCheck
-    public PoetryResult<String> getUpToken(@RequestParam(value = "key") String key) {
-        return PoetryResult.success(qiniuUtil.getToken(key));
+    public ActResult<String> getUpToken(@RequestParam(value = "key") String key) {
+        return ActResult.success(qiniuUtil.getToken(key));
     }
 }

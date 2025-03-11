@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@MapperScan({"com.siaor.poetize.next.repo.mapper"})
+@MapperScan({"com.siaor.poetize.next.res.repo.mapper"})
 public class MybatisPlusConfig {
 
     @Bean

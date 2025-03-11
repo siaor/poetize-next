@@ -60,14 +60,17 @@ Siaor也将使用**POETIZE-NEXT**作为个人博客，欢迎来访，看效果�
 
 ---
 <span style="color: rgb(234,94,67);">
-**PS**：群什么的，现在懒得维护，以后再说。二次开发、部署教程会逐渐完善，稍等一下下。
+**PS**：群什么的，现在懒得维护，以后再说。二次开发、部署教程请往下继续阅读。
 </span>
 
 
 # 技术栈
 POETIZE-NEXT全新升级！
 
+前后端分离，采用最新前沿框架、技术，紧跟时代发展，和POETIZE-NEXT一起共同成长！
+
 后端：
+- 【[JogJo/Kami 神の架构](https://github.com/JogJo/kami)】
 - 【JDK】 [OpenJDK-21.x]（由1.8升级至21）
 - 【框架】 [Springboot-3.x]（由2.x升级至3.x）
 - 【数据库】MySQL（后续默认数据库会变动，总感觉没必要）
@@ -85,7 +88,12 @@ POETIZE-NEXT全新升级！
 - 【框架】Vue3
 - 【UI】Element-Plus、Naive UI
 
-采用前后端分离进行实现，两个前端项目通过Nginx代理，后端使用Java
+--- 
+
+<span style="color: rgb(234,94,67);">
+**PS**：快去部署 POETIZE-NEXT ——
+属于你的诗与远方！
+</span>
 
 # 功能
 博客系统：

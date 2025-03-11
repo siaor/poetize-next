@@ -1,12 +1,12 @@
 package com.siaor.poetize.next.app.api.blog;
 
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
-import com.siaor.poetize.next.res.aop.LoginCheck;
-import com.siaor.poetize.next.res.aop.SaveCheck;
-import com.siaor.poetize.next.res.config.PoetryResult;
-import com.siaor.poetize.next.res.constants.CommonConst;
-import com.siaor.poetize.next.repo.mapper.TreeHoleMapper;
-import com.siaor.poetize.next.repo.po.TreeHolePO;
+import com.siaor.poetize.next.res.oper.aop.LoginCheck;
+import com.siaor.poetize.next.res.oper.aop.SaveCheck;
+import com.siaor.poetize.next.res.norm.ActResult;
+import com.siaor.poetize.next.res.norm.CommonConst;
+import com.siaor.poetize.next.res.repo.mapper.TreeHoleMapper;
+import com.siaor.poetize.next.res.repo.po.TreeHolePO;
 import com.siaor.poetize.next.res.utils.PoetryUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -35,15 +35,15 @@ public class TreeHoleApi {
      */
     @PostMapping("/saveTreeHole")
     @SaveCheck
-    public PoetryResult<TreeHolePO> saveTreeHole(@RequestBody TreeHolePO treeHolePO) {
+    public ActResult<TreeHolePO> saveTreeHole(@RequestBody TreeHolePO treeHolePO) {
         if (!StringUtils.hasText(treeHolePO.getMessage())) {
-            return PoetryResult.fail("留言不能为空！");
+            return ActResult.fail("留言不能为空！");
         }
         treeHoleMapper.insert(treeHolePO);
         if (!StringUtils.hasText(treeHolePO.getAvatar())) {
             treeHolePO.setAvatar(PoetryUtil.getRandomAvatar(null));
         }
-        return PoetryResult.success(treeHolePO);
+        return ActResult.success(treeHolePO);
     }
 
 
@@ -52,9 +52,9 @@ public class TreeHoleApi {
      */
     @GetMapping("/deleteTreeHole")
     @LoginCheck(0)
-    public PoetryResult deleteTreeHole(@RequestParam("id") Integer id) {
+    public ActResult deleteTreeHole(@RequestParam("id") Integer id) {
         treeHoleMapper.deleteById(id);
-        return PoetryResult.success();
+        return ActResult.success();
     }
 
 
@@ -62,7 +62,7 @@ public class TreeHoleApi {
      * 查询List
      */
     @GetMapping("/listTreeHole")
-    public PoetryResult<List<TreeHolePO>> listTreeHole() {
+    public ActResult<List<TreeHolePO>> listTreeHole() {
         List<TreeHolePO> treeHoles;
         int count = new LambdaQueryChainWrapper<>(treeHoleMapper).count().intValue();
         if (count > CommonConst.TREE_HOLE_COUNT) {
@@ -77,6 +77,6 @@ public class TreeHoleApi {
                 treeHolePO.setAvatar(PoetryUtil.getRandomAvatar(treeHolePO.getId().toString()));
             }
         });
-        return PoetryResult.success(treeHoles);
+        return ActResult.success(treeHoles);
     }
 }

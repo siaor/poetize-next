@@ -2,13 +2,13 @@ package com.siaor.poetize.next.app.api.blog;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.siaor.poetize.next.repo.po.FamilyPO;
-import com.siaor.poetize.next.res.aop.LoginCheck;
-import com.siaor.poetize.next.res.config.PoetryResult;
+import com.siaor.poetize.next.res.repo.po.FamilyPO;
+import com.siaor.poetize.next.res.oper.aop.LoginCheck;
+import com.siaor.poetize.next.res.norm.ActResult;
 import com.siaor.poetize.next.pow.FamilyPow;
-import com.siaor.poetize.next.res.constants.CommonConst;
+import com.siaor.poetize.next.res.norm.CommonConst;
 import com.siaor.poetize.next.res.utils.CommonQuery;
-import com.siaor.poetize.next.res.utils.cache.PoetryCache;
+import com.siaor.poetize.next.res.repo.cache.SysCache;
 import com.siaor.poetize.next.res.utils.PoetryUtil;
 import com.siaor.poetize.next.app.vo.BaseRequestVO;
 import com.siaor.poetize.next.app.vo.FamilyVO;
@@ -43,7 +43,7 @@ public class FamilyApi {
      */
     @PostMapping("/saveFamily")
     @LoginCheck
-    public PoetryResult saveFamily(@Validated @RequestBody FamilyVO familyVO) {
+    public ActResult saveFamily(@Validated @RequestBody FamilyVO familyVO) {
         Integer userId = PoetryUtil.getUserId();
         familyVO.setUserId(userId);
         FamilyPO oldFamilyPO = familyPow.lambdaQuery().select(FamilyPO::getId).eq(FamilyPO::getUserId, userId).one();
@@ -63,10 +63,10 @@ public class FamilyApi {
             familyPow.save(familyPO);
         }
         if (userId.intValue() == PoetryUtil.getAdminUser().getId().intValue()) {
-            PoetryCache.put(CommonConst.ADMIN_FAMILY, familyPO);
+            SysCache.put(CommonConst.ADMIN_FAMILY, familyPO);
         }
-        PoetryCache.remove(CommonConst.FAMILY_LIST);
-        return PoetryResult.success();
+        SysCache.remove(CommonConst.FAMILY_LIST);
+        return ActResult.success();
     }
 
     /**
@@ -74,10 +74,10 @@ public class FamilyApi {
      */
     @GetMapping("/deleteFamily")
     @LoginCheck(0)
-    public PoetryResult deleteFamily(@RequestParam("id") Integer id) {
+    public ActResult deleteFamily(@RequestParam("id") Integer id) {
         familyPow.removeById(id);
-        PoetryCache.remove(CommonConst.FAMILY_LIST);
-        return PoetryResult.success();
+        SysCache.remove(CommonConst.FAMILY_LIST);
+        return ActResult.success();
     }
 
     /**
@@ -85,15 +85,15 @@ public class FamilyApi {
      */
     @GetMapping("/getFamily")
     @LoginCheck
-    public PoetryResult<FamilyVO> getFamily() {
+    public ActResult<FamilyVO> getFamily() {
         Integer userId = PoetryUtil.getUserId();
         FamilyPO familyPO = familyPow.lambdaQuery().eq(FamilyPO::getUserId, userId).one();
         if (familyPO == null) {
-            return PoetryResult.success();
+            return ActResult.success();
         } else {
             FamilyVO familyVO = new FamilyVO();
             BeanUtils.copyProperties(familyPO, familyVO);
-            return PoetryResult.success(familyVO);
+            return ActResult.success(familyVO);
         }
     }
 
@@ -101,27 +101,27 @@ public class FamilyApi {
      * 获取
      */
     @GetMapping("/getAdminFamily")
-    public PoetryResult<FamilyVO> getAdminFamily() {
-        FamilyPO familyPO = (FamilyPO) PoetryCache.get(CommonConst.ADMIN_FAMILY);
+    public ActResult<FamilyVO> getAdminFamily() {
+        FamilyPO familyPO = (FamilyPO) SysCache.get(CommonConst.ADMIN_FAMILY);
         if (familyPO == null) {
-            return PoetryResult.fail("请初始化表白墙");
+            return ActResult.fail("请初始化表白墙");
         }
         FamilyVO familyVO = new FamilyVO();
         BeanUtils.copyProperties(familyPO, familyVO);
-        return PoetryResult.success(familyVO);
+        return ActResult.success(familyVO);
     }
 
     /**
      * 查询随机家庭
      */
     @GetMapping("/listRandomFamily")
-    public PoetryResult<List<FamilyVO>> listRandomFamily(@RequestParam(value = "size", defaultValue = "10") Integer size) {
+    public ActResult<List<FamilyVO>> listRandomFamily(@RequestParam(value = "size", defaultValue = "10") Integer size) {
         List<FamilyVO> familyList = commonQuery.getFamilyList();
         if (familyList.size() > size) {
             Collections.shuffle(familyList);
             familyList = familyList.subList(0, size);
         }
-        return PoetryResult.success(familyList);
+        return ActResult.success(familyList);
     }
 
     /**
@@ -129,11 +129,11 @@ public class FamilyApi {
      */
     @PostMapping("/listFamily")
     @LoginCheck(0)
-    public PoetryResult<Page> listFamily(@RequestBody BaseRequestVO baseRequestVO) {
+    public ActResult<Page> listFamily(@RequestBody BaseRequestVO baseRequestVO) {
         familyPow.lambdaQuery()
                 .eq(baseRequestVO.getStatus() != null, FamilyPO::getStatus, baseRequestVO.getStatus())
                 .orderByDesc(FamilyPO::getCreateTime).page(baseRequestVO);
-        return PoetryResult.success(baseRequestVO);
+        return ActResult.success(baseRequestVO);
     }
 
     /**
@@ -141,9 +141,9 @@ public class FamilyApi {
      */
     @GetMapping("/changeLoveStatus")
     @LoginCheck(0)
-    public PoetryResult changeLoveStatus(@RequestParam("id") Integer id, @RequestParam("flag") Boolean flag) {
+    public ActResult changeLoveStatus(@RequestParam("id") Integer id, @RequestParam("flag") Boolean flag) {
         familyPow.lambdaUpdate().eq(FamilyPO::getId, id).set(FamilyPO::getStatus, flag).update();
-        PoetryCache.remove(CommonConst.FAMILY_LIST);
-        return PoetryResult.success();
+        SysCache.remove(CommonConst.FAMILY_LIST);
+        return ActResult.success();
     }
 }

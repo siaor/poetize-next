@@ -2,17 +2,17 @@ package com.siaor.poetize.next.app.api.sys;
 
 import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.siaor.poetize.next.repo.po.UserPO;
-import com.siaor.poetize.next.res.aop.LoginCheck;
-import com.siaor.poetize.next.res.config.PoetryResult;
-import com.siaor.poetize.next.res.constants.CommonConst;
-import com.siaor.poetize.next.res.enums.CodeMsg;
-import com.siaor.poetize.next.res.enums.SysEnum;
-import com.siaor.poetize.next.res.websocket.TioUtil;
-import com.siaor.poetize.next.res.websocket.TioWebsocketStarter;
+import com.siaor.poetize.next.res.repo.po.UserPO;
+import com.siaor.poetize.next.res.oper.aop.LoginCheck;
+import com.siaor.poetize.next.res.norm.ActResult;
+import com.siaor.poetize.next.res.norm.CommonConst;
+import com.siaor.poetize.next.res.norm.ActCode;
+import com.siaor.poetize.next.res.norm.SysEnum;
+import com.siaor.poetize.next.res.utils.TioUtil;
+import com.siaor.poetize.next.res.oper.im.TioWebsocketStarter;
 import com.siaor.poetize.next.pow.UserPow;
 import com.siaor.poetize.next.res.utils.PoetryUtil;
-import com.siaor.poetize.next.res.utils.cache.PoetryCache;
+import com.siaor.poetize.next.res.repo.cache.SysCache;
 import com.siaor.poetize.next.app.vo.BaseRequestVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -38,7 +38,7 @@ public class AdminUserApi {
      */
     @PostMapping("/user/list")
     @LoginCheck(0)
-    public PoetryResult<Page> listUser(@RequestBody BaseRequestVO baseRequestVO) {
+    public ActResult<Page> listUser(@RequestBody BaseRequestVO baseRequestVO) {
         return userPow.listUser(baseRequestVO);
     }
 
@@ -50,9 +50,9 @@ public class AdminUserApi {
      */
     @GetMapping("/user/changeUserStatus")
     @LoginCheck(0)
-    public PoetryResult changeUserStatus(@RequestParam("userId") Integer userId, @RequestParam("flag") Boolean flag) {
+    public ActResult changeUserStatus(@RequestParam("userId") Integer userId, @RequestParam("flag") Boolean flag) {
         if (userId.intValue() == PoetryUtil.getAdminUser().getId().intValue()) {
-            return PoetryResult.fail("站长状态不能修改！");
+            return ActResult.fail("站长状态不能修改！");
         }
 
         LambdaUpdateChainWrapper<UserPO> updateChainWrapper = userPow.lambdaUpdate().eq(UserPO::getId, userId);
@@ -62,7 +62,7 @@ public class AdminUserApi {
             updateChainWrapper.eq(UserPO::getUserStatus, SysEnum.STATUS_ENABLE.getCode()).set(UserPO::getUserStatus, SysEnum.STATUS_DISABLE.getCode()).update();
         }
         logout(userId);
-        return PoetryResult.success();
+        return ActResult.success();
     }
 
     /**
@@ -70,13 +70,13 @@ public class AdminUserApi {
      */
     @GetMapping("/user/changeUserAdmire")
     @LoginCheck(0)
-    public PoetryResult changeUserAdmire(@RequestParam("userId") Integer userId, @RequestParam("admire") String admire) {
+    public ActResult changeUserAdmire(@RequestParam("userId") Integer userId, @RequestParam("admire") String admire) {
         userPow.lambdaUpdate()
                 .eq(UserPO::getId, userId)
                 .set(UserPO::getAdmire, admire)
                 .update();
-        PoetryCache.remove(CommonConst.ADMIRE);
-        return PoetryResult.success();
+        SysCache.remove(CommonConst.ADMIRE);
+        return ActResult.success();
     }
 
     /**
@@ -84,31 +84,31 @@ public class AdminUserApi {
      */
     @GetMapping("/user/changeUserType")
     @LoginCheck(0)
-    public PoetryResult changeUserType(@RequestParam("userId") Integer userId, @RequestParam("userType") Integer userType) {
+    public ActResult changeUserType(@RequestParam("userId") Integer userId, @RequestParam("userType") Integer userType) {
         if (userId.intValue() == PoetryUtil.getAdminUser().getId().intValue()) {
-            return PoetryResult.fail("站长类型不能修改！");
+            return ActResult.fail("站长类型不能修改！");
         }
 
         if (userType != 0 && userType != 1 && userType != 2) {
-            return PoetryResult.fail(CodeMsg.PARAMETER_ERROR);
+            return ActResult.fail(ActCode.PARAMETER_ERROR);
         }
         userPow.lambdaUpdate().eq(UserPO::getId, userId).set(UserPO::getUserType, userType).update();
 
         logout(userId);
-        return PoetryResult.success();
+        return ActResult.success();
     }
 
     private void logout(Integer userId) {
-        if (PoetryCache.get(CommonConst.ADMIN_TOKEN + userId) != null) {
-            String token = (String) PoetryCache.get(CommonConst.ADMIN_TOKEN + userId);
-            PoetryCache.remove(CommonConst.ADMIN_TOKEN + userId);
-            PoetryCache.remove(token);
+        if (SysCache.get(CommonConst.ADMIN_TOKEN + userId) != null) {
+            String token = (String) SysCache.get(CommonConst.ADMIN_TOKEN + userId);
+            SysCache.remove(CommonConst.ADMIN_TOKEN + userId);
+            SysCache.remove(token);
         }
 
-        if (PoetryCache.get(CommonConst.USER_TOKEN + userId) != null) {
-            String token = (String) PoetryCache.get(CommonConst.USER_TOKEN + userId);
-            PoetryCache.remove(CommonConst.USER_TOKEN + userId);
-            PoetryCache.remove(token);
+        if (SysCache.get(CommonConst.USER_TOKEN + userId) != null) {
+            String token = (String) SysCache.get(CommonConst.USER_TOKEN + userId);
+            SysCache.remove(CommonConst.USER_TOKEN + userId);
+            SysCache.remove(token);
         }
         TioWebsocketStarter tioWebsocketStarter = TioUtil.getTio();
         if (tioWebsocketStarter != null) {

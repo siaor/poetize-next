@@ -2,13 +2,13 @@ package com.siaor.poetize.next.app.api.im;
 
 
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
-import com.siaor.poetize.next.repo.po.UserPO;
-import com.siaor.poetize.next.res.aop.LoginCheck;
-import com.siaor.poetize.next.res.config.PoetryResult;
-import com.siaor.poetize.next.repo.po.im.ChatUserFriendPO;
+import com.siaor.poetize.next.res.repo.po.UserPO;
+import com.siaor.poetize.next.res.oper.aop.LoginCheck;
+import com.siaor.poetize.next.res.norm.ActResult;
+import com.siaor.poetize.next.res.repo.po.im.ChatUserFriendPO;
 import com.siaor.poetize.next.pow.im.ImChatUserFriendPow;
 import com.siaor.poetize.next.app.vo.im.UserFriendVO;
-import com.siaor.poetize.next.res.websocket.ImConfigConst;
+import com.siaor.poetize.next.res.norm.im.ImConfigConst;
 import com.siaor.poetize.next.res.utils.CommonQuery;
 import com.siaor.poetize.next.res.utils.PoetryUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,10 +44,10 @@ public class ImChatUserFriendApi {
      */
     @GetMapping("/addFriend")
     @LoginCheck
-    public PoetryResult addFriend(@RequestParam("friendId") Integer friendId, @RequestParam(value = "remark", required = false) String remark) {
+    public ActResult addFriend(@RequestParam("friendId") Integer friendId, @RequestParam(value = "remark", required = false) String remark) {
         UserPO friend = commonQuery.getUser(friendId);
         if (friend == null) {
-            return PoetryResult.fail("用户不存在！");
+            return ActResult.fail("用户不存在！");
         }
 
         Integer userId = PoetryUtil.getUserId();
@@ -57,7 +57,7 @@ public class ImChatUserFriendApi {
                 .or(wrapper -> wrapper.eq(ChatUserFriendPO::getFriendId, userId).eq(ChatUserFriendPO::getUserId, friendId))
                 .count().intValue();
         if (count > 0) {
-            return PoetryResult.success();
+            return ActResult.success();
         }
 
         ChatUserFriendPO imChatFriend = new ChatUserFriendPO();
@@ -66,7 +66,7 @@ public class ImChatUserFriendApi {
         imChatFriend.setFriendStatus(ImConfigConst.FRIEND_STATUS_NOT_VERIFY);
         imChatFriend.setRemark(remark);
         userFriendService.save(imChatFriend);
-        return PoetryResult.success();
+        return ActResult.success();
     }
 
     /**
@@ -74,7 +74,7 @@ public class ImChatUserFriendApi {
      */
     @GetMapping("/getFriend")
     @LoginCheck
-    public PoetryResult<List<UserFriendVO>> getFriend(@RequestParam(value = "friendStatus", required = false) Integer friendStatus) {
+    public ActResult<List<UserFriendVO>> getFriend(@RequestParam(value = "friendStatus", required = false) Integer friendStatus) {
         Integer userId = PoetryUtil.getUserId();
         LambdaQueryChainWrapper<ChatUserFriendPO> wrapper = userFriendService.lambdaQuery().eq(ChatUserFriendPO::getUserId, userId);
         if (friendStatus != null) {
@@ -100,7 +100,7 @@ public class ImChatUserFriendApi {
                 userFriendVOS.add(userFriendVO);
             }
         });
-        return PoetryResult.success(userFriendVOS);
+        return ActResult.success(userFriendVOS);
     }
 
     /**
@@ -110,16 +110,16 @@ public class ImChatUserFriendApi {
      */
     @GetMapping("/changeFriend")
     @LoginCheck
-    public PoetryResult changeFriend(@RequestParam("friendId") Integer friendId,
-                                     @RequestParam(value = "friendStatus", required = false) Integer friendStatus,
-                                     @RequestParam(value = "remark", required = false) String remark) {
+    public ActResult changeFriend(@RequestParam("friendId") Integer friendId,
+                                  @RequestParam(value = "friendStatus", required = false) Integer friendStatus,
+                                  @RequestParam(value = "remark", required = false) String remark) {
         Integer userId = PoetryUtil.getUserId();
         ChatUserFriendPO userFriend = userFriendService.lambdaQuery()
                 .eq(ChatUserFriendPO::getUserId, userId)
                 .eq(ChatUserFriendPO::getFriendId, friendId).one();
 
         if (userFriend == null) {
-            return PoetryResult.fail("好友不存在！");
+            return ActResult.fail("好友不存在！");
         }
 
         if (friendStatus != null) {
@@ -150,7 +150,7 @@ public class ImChatUserFriendApi {
         }
 
 
-        return PoetryResult.success();
+        return ActResult.success();
     }
 }
 

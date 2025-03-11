@@ -4,11 +4,11 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.siaor.poetize.next.res.aop.LoginCheck;
-import com.siaor.poetize.next.res.config.PoetryResult;
-import com.siaor.poetize.next.res.constants.CommonConst;
-import com.siaor.poetize.next.repo.mapper.ResourcePathMapper;
-import com.siaor.poetize.next.repo.po.ResourcePathPO;
+import com.siaor.poetize.next.res.oper.aop.LoginCheck;
+import com.siaor.poetize.next.res.norm.ActResult;
+import com.siaor.poetize.next.res.norm.CommonConst;
+import com.siaor.poetize.next.res.repo.mapper.ResourcePathMapper;
+import com.siaor.poetize.next.res.repo.po.ResourcePathPO;
 import com.siaor.poetize.next.res.utils.PoetryUtil;
 import com.siaor.poetize.next.app.vo.BaseRequestVO;
 import com.siaor.poetize.next.app.vo.ResourcePathVO;
@@ -42,9 +42,9 @@ public class ResourceAggregationApi {
      */
     @LoginCheck(0)
     @PostMapping("/saveResourcePath")
-    public PoetryResult saveResourcePath(@RequestBody ResourcePathVO resourcePathVO) {
+    public ActResult saveResourcePath(@RequestBody ResourcePathVO resourcePathVO) {
         if (!StringUtils.hasText(resourcePathVO.getTitle()) || !StringUtils.hasText(resourcePathVO.getType())) {
-            return PoetryResult.fail("标题和资源类型不能为空！");
+            return ActResult.fail("标题和资源类型不能为空！");
         }
         if (CommonConst.RESOURCE_PATH_TYPE_LOVE_PHOTO.equals(resourcePathVO.getType())) {
             resourcePathVO.setRemark(PoetryUtil.getAdminUser().getId().toString());
@@ -52,7 +52,7 @@ public class ResourceAggregationApi {
         ResourcePathPO resourcePathPO = new ResourcePathPO();
         BeanUtils.copyProperties(resourcePathVO, resourcePathPO);
         resourcePathMapper.insert(resourcePathPO);
-        return PoetryResult.success();
+        return ActResult.success();
     }
 
     /**
@@ -60,9 +60,9 @@ public class ResourceAggregationApi {
      */
     @GetMapping("/deleteResourcePath")
     @LoginCheck(0)
-    public PoetryResult deleteResourcePath(@RequestParam("id") Integer id) {
+    public ActResult deleteResourcePath(@RequestParam("id") Integer id) {
         resourcePathMapper.deleteById(id);
-        return PoetryResult.success();
+        return ActResult.success();
     }
 
     /**
@@ -70,12 +70,12 @@ public class ResourceAggregationApi {
      */
     @PostMapping("/updateResourcePath")
     @LoginCheck(0)
-    public PoetryResult updateResourcePath(@RequestBody ResourcePathVO resourcePathVO) {
+    public ActResult updateResourcePath(@RequestBody ResourcePathVO resourcePathVO) {
         if (!StringUtils.hasText(resourcePathVO.getTitle()) || !StringUtils.hasText(resourcePathVO.getType())) {
-            return PoetryResult.fail("标题和资源类型不能为空！");
+            return ActResult.fail("标题和资源类型不能为空！");
         }
         if (resourcePathVO.getId() == null) {
-            return PoetryResult.fail("Id不能为空！");
+            return ActResult.fail("Id不能为空！");
         }
         if (CommonConst.RESOURCE_PATH_TYPE_LOVE_PHOTO.equals(resourcePathVO.getType())) {
             resourcePathVO.setRemark(PoetryUtil.getAdminUser().getId().toString());
@@ -83,7 +83,7 @@ public class ResourceAggregationApi {
         ResourcePathPO resourcePathPO = new ResourcePathPO();
         BeanUtils.copyProperties(resourcePathVO, resourcePathPO);
         resourcePathMapper.updateById(resourcePathPO);
-        return PoetryResult.success();
+        return ActResult.success();
     }
 
 
@@ -91,7 +91,7 @@ public class ResourceAggregationApi {
      * 查询资源
      */
     @PostMapping("/listResourcePath")
-    public PoetryResult<Page> listResourcePath(@RequestBody BaseRequestVO baseRequestVO) {
+    public ActResult<Page> listResourcePath(@RequestBody BaseRequestVO baseRequestVO) {
         LambdaQueryChainWrapper<ResourcePathPO> wrapper = new LambdaQueryChainWrapper<>(resourcePathMapper);
         wrapper.eq(StringUtils.hasText(baseRequestVO.getResourceType()), ResourcePathPO::getType, baseRequestVO.getResourceType());
         wrapper.eq(StringUtils.hasText(baseRequestVO.getClassify()), ResourcePathPO::getClassify, baseRequestVO.getClassify());
@@ -121,6 +121,6 @@ public class ResourceAggregationApi {
             }).collect(Collectors.toList());
             baseRequestVO.setRecords(resourcePathVOs);
         }
-        return PoetryResult.success(baseRequestVO);
+        return ActResult.success(baseRequestVO);
     }
 }

@@ -2,8 +2,8 @@ package com.siaor.poetize.next.pow;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.siaor.poetize.next.res.config.PoetryResult;
-import com.siaor.poetize.next.repo.po.UserPO;
+import com.siaor.poetize.next.res.norm.ActResult;
+import com.siaor.poetize.next.res.repo.po.UserPO;
 import com.siaor.poetize.next.app.vo.BaseRequestVO;
 import com.siaor.poetize.next.app.vo.UserVO;
 
@@ -26,29 +26,29 @@ public interface UserPow extends IService<UserPO> {
      * @param password
      * @return
      */
-    PoetryResult<UserVO> login(String account, String password, Boolean isAdmin);
+    ActResult<UserVO> login(String account, String password, Boolean isAdmin);
 
-    PoetryResult exit();
+    ActResult exit();
 
-    PoetryResult<UserVO> regist(UserVO user);
+    ActResult<UserVO> regist(UserVO user);
 
-    PoetryResult<UserVO> updateUserInfo(UserVO user);
+    ActResult<UserVO> updateUserInfo(UserVO user);
 
-    PoetryResult getCode(Integer flag);
+    ActResult getCode(Integer flag);
 
-    PoetryResult getCodeForBind(String place, Integer flag);
+    ActResult getCodeForBind(String place, Integer flag);
 
-    PoetryResult<UserVO> updateSecretInfo(String place, Integer flag, String code, String password);
+    ActResult<UserVO> updateSecretInfo(String place, Integer flag, String code, String password);
 
-    PoetryResult getCodeForForgetPassword(String place, Integer flag);
+    ActResult getCodeForForgetPassword(String place, Integer flag);
 
-    PoetryResult updateForForgetPassword(String place, Integer flag, String code, String password);
+    ActResult updateForForgetPassword(String place, Integer flag, String code, String password);
 
-    PoetryResult<Page> listUser(BaseRequestVO baseRequestVO);
+    ActResult<Page> listUser(BaseRequestVO baseRequestVO);
 
-    PoetryResult<List<UserVO>> getUserByUsername(String username);
+    ActResult<List<UserVO>> getUserByUsername(String username);
 
-    PoetryResult<UserVO> token(String userToken);
+    ActResult<UserVO> token(String userToken);
 
-    PoetryResult<UserVO> subscribe(Integer labelId, Boolean flag);
+    ActResult<UserVO> subscribe(Integer labelId, Boolean flag);
 }

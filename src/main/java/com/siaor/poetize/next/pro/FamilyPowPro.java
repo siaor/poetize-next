@@ -1,7 +1,7 @@
 package com.siaor.poetize.next.pro;
 
-import com.siaor.poetize.next.repo.po.FamilyPO;
-import com.siaor.poetize.next.repo.mapper.FamilyMapper;
+import com.siaor.poetize.next.res.repo.po.FamilyPO;
+import com.siaor.poetize.next.res.repo.mapper.FamilyMapper;
 import com.siaor.poetize.next.pow.FamilyPow;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;

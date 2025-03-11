@@ -1,7 +1,7 @@
 package com.siaor.poetize.next.pro.im;
 
-import com.siaor.poetize.next.repo.po.im.ChatUserGroupMessagePO;
-import com.siaor.poetize.next.repo.mapper.im.ImChatUserGroupMessageMapper;
+import com.siaor.poetize.next.res.repo.po.im.ChatUserGroupMessagePO;
+import com.siaor.poetize.next.res.repo.mapper.im.ImChatUserGroupMessageMapper;
 import com.siaor.poetize.next.pow.im.ImChatUserGroupMessagePow;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;

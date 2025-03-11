@@ -1,11 +1,11 @@
 package com.siaor.poetize.next.res.utils;
 
 import com.alibaba.fastjson.JSON;
-import com.siaor.poetize.next.res.constants.CommonConst;
-import com.siaor.poetize.next.repo.po.UserPO;
-import com.siaor.poetize.next.repo.po.WebInfoPO;
-import com.siaor.poetize.next.res.handle.PoetryRuntimeException;
-import com.siaor.poetize.next.res.utils.cache.PoetryCache;
+import com.siaor.poetize.next.res.norm.CommonConst;
+import com.siaor.poetize.next.res.repo.po.UserPO;
+import com.siaor.poetize.next.res.repo.po.WebInfoPO;
+import com.siaor.poetize.next.res.norm.exception.SysRuntimeException;
+import com.siaor.poetize.next.res.repo.cache.SysCache;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -22,9 +22,9 @@ public class PoetryUtil {
     }
 
     public static void checkEmail() {
-        UserPO userPO = (UserPO) PoetryCache.get(PoetryUtil.getToken());
+        UserPO userPO = (UserPO) SysCache.get(PoetryUtil.getToken());
         if (!StringUtils.hasText(userPO.getEmail())) {
-            throw new PoetryRuntimeException("请先绑定邮箱！");
+            throw new SysRuntimeException("请先绑定邮箱！");
         }
     }
 
@@ -34,12 +34,12 @@ public class PoetryUtil {
     }
 
     public static UserPO getCurrentUser() {
-        UserPO userPO = (UserPO) PoetryCache.get(PoetryUtil.getToken());
+        UserPO userPO = (UserPO) SysCache.get(PoetryUtil.getToken());
         return userPO;
     }
 
     public static UserPO getAdminUser() {
-        UserPO admin = (UserPO) PoetryCache.get(CommonConst.ADMIN);
+        UserPO admin = (UserPO) SysCache.get(CommonConst.ADMIN);
         return admin;
     }
 
@@ -48,17 +48,17 @@ public class PoetryUtil {
         if (!StringUtils.hasText(token)) {
             return null;
         }
-        UserPO userPO = (UserPO) PoetryCache.get(token);
+        UserPO userPO = (UserPO) SysCache.get(token);
         return userPO == null ? null : userPO.getId();
     }
 
     public static String getUsername() {
-        UserPO userPO = (UserPO) PoetryCache.get(PoetryUtil.getToken());
+        UserPO userPO = (UserPO) SysCache.get(PoetryUtil.getToken());
         return userPO == null ? null : userPO.getUsername();
     }
 
     public static String getRandomAvatar(String key) {
-        WebInfoPO webInfoPO = (WebInfoPO) PoetryCache.get(CommonConst.WEB_INFO);
+        WebInfoPO webInfoPO = (WebInfoPO) SysCache.get(CommonConst.WEB_INFO);
         if (webInfoPO != null) {
             String randomAvatar = webInfoPO.getRandomAvatar();
             List<String> randomAvatars = JSON.parseArray(randomAvatar, String.class);
@@ -79,7 +79,7 @@ public class PoetryUtil {
     }
 
     public static String getRandomName(String key) {
-        WebInfoPO webInfoPO = (WebInfoPO) PoetryCache.get(CommonConst.WEB_INFO);
+        WebInfoPO webInfoPO = (WebInfoPO) SysCache.get(CommonConst.WEB_INFO);
         if (webInfoPO != null) {
             String randomName = webInfoPO.getRandomName();
             List<String> randomNames = JSON.parseArray(randomName, String.class);
@@ -100,7 +100,7 @@ public class PoetryUtil {
     }
 
     public static String getRandomCover(String key) {
-        WebInfoPO webInfoPO = (WebInfoPO) PoetryCache.get(CommonConst.WEB_INFO);
+        WebInfoPO webInfoPO = (WebInfoPO) SysCache.get(CommonConst.WEB_INFO);
         if (webInfoPO != null) {
             String randomCover = webInfoPO.getRandomCover();
             List<String> randomCovers = JSON.parseArray(randomCover, String.class);

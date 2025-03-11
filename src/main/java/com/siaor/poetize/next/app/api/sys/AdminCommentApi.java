@@ -1,11 +1,11 @@
 package com.siaor.poetize.next.app.api.sys;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.siaor.poetize.next.repo.po.ArticlePO;
-import com.siaor.poetize.next.repo.po.CommentPO;
-import com.siaor.poetize.next.res.aop.LoginCheck;
-import com.siaor.poetize.next.res.config.PoetryResult;
-import com.siaor.poetize.next.res.enums.CommentTypeEnum;
+import com.siaor.poetize.next.res.repo.po.ArticlePO;
+import com.siaor.poetize.next.res.repo.po.CommentPO;
+import com.siaor.poetize.next.res.oper.aop.LoginCheck;
+import com.siaor.poetize.next.res.norm.ActResult;
+import com.siaor.poetize.next.res.norm.CommentTypeEnum;
 import com.siaor.poetize.next.pow.ArticlePow;
 import com.siaor.poetize.next.pow.CommentPow;
 import com.siaor.poetize.next.res.utils.PoetryUtil;
@@ -36,20 +36,20 @@ public class AdminCommentApi {
      */
     @GetMapping("/comment/user/deleteComment")
     @LoginCheck(1)
-    public PoetryResult userDeleteComment(@RequestParam("id") Integer id) {
+    public ActResult userDeleteComment(@RequestParam("id") Integer id) {
         CommentPO commentPO = commentPow.lambdaQuery().select(CommentPO::getSource, CommentPO::getType).eq(CommentPO::getId, id).one();
         if (commentPO == null) {
-            return PoetryResult.success();
+            return ActResult.success();
         }
         if (!CommentTypeEnum.COMMENT_TYPE_ARTICLE.getCode().equals(commentPO.getType())) {
-            return PoetryResult.fail("权限不足！");
+            return ActResult.fail("权限不足！");
         }
         ArticlePO one = articlePow.lambdaQuery().eq(ArticlePO::getId, commentPO.getSource()).select(ArticlePO::getUserId).one();
         if (one == null || (PoetryUtil.getUserId().intValue() != one.getUserId().intValue())) {
-            return PoetryResult.fail("权限不足！");
+            return ActResult.fail("权限不足！");
         }
         commentPow.removeById(id);
-        return PoetryResult.success();
+        return ActResult.success();
     }
 
     /**
@@ -57,9 +57,9 @@ public class AdminCommentApi {
      */
     @GetMapping("/comment/boss/deleteComment")
     @LoginCheck(0)
-    public PoetryResult bossDeleteComment(@RequestParam("id") Integer id) {
+    public ActResult bossDeleteComment(@RequestParam("id") Integer id) {
         commentPow.removeById(id);
-        return PoetryResult.success();
+        return ActResult.success();
     }
 
     /**
@@ -67,7 +67,7 @@ public class AdminCommentApi {
      */
     @PostMapping("/comment/user/list")
     @LoginCheck(1)
-    public PoetryResult<Page> listUserComment(@RequestBody BaseRequestVO baseRequestVO) {
+    public ActResult<Page> listUserComment(@RequestBody BaseRequestVO baseRequestVO) {
         return commentPow.listAdminComment(baseRequestVO, false);
     }
 
@@ -76,7 +76,7 @@ public class AdminCommentApi {
      */
     @PostMapping("/comment/boss/list")
     @LoginCheck(0)
-    public PoetryResult<Page> listBossComment(@RequestBody BaseRequestVO baseRequestVO) {
+    public ActResult<Page> listBossComment(@RequestBody BaseRequestVO baseRequestVO) {
         return commentPow.listAdminComment(baseRequestVO, true);
     }
 }

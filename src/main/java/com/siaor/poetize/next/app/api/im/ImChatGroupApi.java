@@ -3,22 +3,22 @@ package com.siaor.poetize.next.app.api.im;
 
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
-import com.siaor.poetize.next.res.aop.LoginCheck;
-import com.siaor.poetize.next.res.config.PoetryResult;
-import com.siaor.poetize.next.res.aop.SaveCheck;
-import com.siaor.poetize.next.repo.po.UserPO;
-import com.siaor.poetize.next.repo.po.im.ChatGroupPO;
-import com.siaor.poetize.next.repo.po.im.ChatGroupUserPO;
-import com.siaor.poetize.next.repo.po.im.ChatUserGroupMessagePO;
+import com.siaor.poetize.next.res.oper.aop.LoginCheck;
+import com.siaor.poetize.next.res.norm.ActResult;
+import com.siaor.poetize.next.res.oper.aop.SaveCheck;
+import com.siaor.poetize.next.res.repo.po.UserPO;
+import com.siaor.poetize.next.res.repo.po.im.ChatGroupPO;
+import com.siaor.poetize.next.res.repo.po.im.ChatGroupUserPO;
+import com.siaor.poetize.next.res.repo.po.im.ChatUserGroupMessagePO;
 import com.siaor.poetize.next.pow.im.ImChatGroupPow;
 import com.siaor.poetize.next.pow.im.ImChatGroupUserPow;
 import com.siaor.poetize.next.pow.im.ImChatUserGroupMessagePow;
 import com.siaor.poetize.next.app.vo.im.GroupVO;
-import com.siaor.poetize.next.res.websocket.ImConfigConst;
-import com.siaor.poetize.next.res.websocket.TioUtil;
-import com.siaor.poetize.next.res.websocket.TioWebsocketStarter;
-import com.siaor.poetize.next.res.enums.CodeMsg;
-import com.siaor.poetize.next.res.enums.SysEnum;
+import com.siaor.poetize.next.res.norm.im.ImConfigConst;
+import com.siaor.poetize.next.res.utils.TioUtil;
+import com.siaor.poetize.next.res.oper.im.TioWebsocketStarter;
+import com.siaor.poetize.next.res.norm.ActCode;
+import com.siaor.poetize.next.res.norm.SysEnum;
 import com.siaor.poetize.next.res.utils.PoetryUtil;
 import com.siaor.poetize.next.app.vo.BaseRequestVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,9 +60,9 @@ public class ImChatGroupApi {
     @PostMapping("/creatGroupCommon")
     @LoginCheck
     @SaveCheck
-    public PoetryResult creatGroup(@RequestBody ChatGroupPO chatGroupPO) {
+    public ActResult creatGroup(@RequestBody ChatGroupPO chatGroupPO) {
         if (!StringUtils.hasText(chatGroupPO.getGroupName())) {
-            return PoetryResult.fail(CodeMsg.PARAMETER_ERROR);
+            return ActResult.fail(ActCode.PARAMETER_ERROR);
         }
         chatGroupPO.setGroupType(ImConfigConst.GROUP_COMMON);
         Integer userId = PoetryUtil.getUserId();
@@ -81,7 +81,7 @@ public class ImChatGroupApi {
             Tio.bindGroup(tioWebsocketStarter.getServerTioConfig(), String.valueOf(userId), String.valueOf(chatGroupPO.getId()));
         }
 
-        return PoetryResult.success();
+        return ActResult.success();
     }
 
     /**
@@ -89,9 +89,9 @@ public class ImChatGroupApi {
      */
     @PostMapping("/creatGroupTopic")
     @LoginCheck(0)
-    public PoetryResult creatGroupTopic(@RequestBody ChatGroupPO chatGroupPO) {
+    public ActResult creatGroupTopic(@RequestBody ChatGroupPO chatGroupPO) {
         if (!StringUtils.hasText(chatGroupPO.getGroupName())) {
-            return PoetryResult.fail(CodeMsg.PARAMETER_ERROR);
+            return ActResult.fail(ActCode.PARAMETER_ERROR);
         }
         chatGroupPO.setGroupType(ImConfigConst.GROUP_TOPIC);
         Integer userId = PoetryUtil.getUserId();
@@ -99,7 +99,7 @@ public class ImChatGroupApi {
         chatGroupPO.setInType(ImConfigConst.IN_TYPE_FALSE);
         imChatGroupPow.save(chatGroupPO);
 
-        return PoetryResult.success();
+        return ActResult.success();
     }
 
 
@@ -110,7 +110,7 @@ public class ImChatGroupApi {
      */
     @PostMapping("/updateGroup")
     @LoginCheck
-    public PoetryResult updateGroup(@RequestBody ChatGroupPO chatGroupPO) {
+    public ActResult updateGroup(@RequestBody ChatGroupPO chatGroupPO) {
         LambdaUpdateChainWrapper<ChatGroupPO> lambdaUpdate = imChatGroupPow.lambdaUpdate();
         lambdaUpdate.eq(ChatGroupPO::getId, chatGroupPO.getId());
         lambdaUpdate.eq(ChatGroupPO::getMasterUserId, PoetryUtil.getUserId());
@@ -139,7 +139,7 @@ public class ImChatGroupApi {
         if (isSuccess && StringUtils.hasText(chatGroupPO.getNotice())) {
             // todo 发送群公告
         }
-        return PoetryResult.success();
+        return ActResult.success();
     }
 
     /**
@@ -147,7 +147,7 @@ public class ImChatGroupApi {
      */
     @GetMapping("/deleteGroup")
     @LoginCheck
-    public PoetryResult deleteGroup(@RequestParam("id") Integer id) {
+    public ActResult deleteGroup(@RequestParam("id") Integer id) {
         UserPO currentUserPO = PoetryUtil.getCurrentUser();
         boolean isSuccess;
         if (currentUserPO.getUserType().intValue() == SysEnum.USER_TYPE_ADMIN.getCode()) {
@@ -171,7 +171,7 @@ public class ImChatGroupApi {
                 Tio.removeGroup(tioWebsocketStarter.getServerTioConfig(), String.valueOf(id), "remove group");
             }
         }
-        return PoetryResult.success();
+        return ActResult.success();
     }
 
     /**
@@ -179,10 +179,10 @@ public class ImChatGroupApi {
      */
     @PostMapping("/listGroupForAdmin")
     @LoginCheck(0)
-    public PoetryResult<BaseRequestVO> listGroupForAdmin(@RequestBody BaseRequestVO baseRequestVO) {
+    public ActResult<BaseRequestVO> listGroupForAdmin(@RequestBody BaseRequestVO baseRequestVO) {
         LambdaQueryChainWrapper<ChatGroupPO> lambdaQuery = imChatGroupPow.lambdaQuery();
         lambdaQuery.orderByDesc(ChatGroupPO::getCreateTime).page(baseRequestVO);
-        return PoetryResult.success(baseRequestVO);
+        return ActResult.success(baseRequestVO);
     }
 
     /**
@@ -190,7 +190,7 @@ public class ImChatGroupApi {
      */
     @GetMapping("/addGroupTopic")
     @LoginCheck
-    public PoetryResult addGroupTopic(@RequestParam("id") Integer id) {
+    public ActResult addGroupTopic(@RequestParam("id") Integer id) {
         LambdaQueryChainWrapper<ChatGroupPO> lambdaQuery = imChatGroupPow.lambdaQuery();
         Integer count = lambdaQuery.eq(ChatGroupPO::getId, id)
                 .eq(ChatGroupPO::getGroupType, ImConfigConst.GROUP_TOPIC).count().intValue();
@@ -200,7 +200,7 @@ public class ImChatGroupApi {
                 Tio.bindGroup(tioWebsocketStarter.getServerTioConfig(), String.valueOf(PoetryUtil.getUserId()), String.valueOf(id));
             }
         }
-        return PoetryResult.success();
+        return ActResult.success();
     }
 
     /**
@@ -210,7 +210,7 @@ public class ImChatGroupApi {
      */
     @GetMapping("/listGroup")
     @LoginCheck
-    public PoetryResult<List<GroupVO>> listGroup() {
+    public ActResult<List<GroupVO>> listGroup() {
         Integer userId = PoetryUtil.getUserId();
         LambdaQueryChainWrapper<ChatGroupUserPO> lambdaQuery = imChatGroupUserPow.lambdaQuery();
         lambdaQuery.eq(ChatGroupUserPO::getUserId, userId);
@@ -236,7 +236,7 @@ public class ImChatGroupApi {
             }
             return getGroupVO(imChatGroup, chatGroupUserPO);
         }).collect(Collectors.toList());
-        return PoetryResult.success(groupVOS);
+        return ActResult.success(groupVOS);
     }
 
     private GroupVO getGroupVO(ChatGroupPO chatGroupPO, ChatGroupUserPO chatGroupUserPO) {

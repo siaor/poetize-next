@@ -1,7 +1,7 @@
 package com.siaor.poetize.next.res.utils.mail;
 
 import com.alibaba.fastjson.JSON;
-import com.siaor.poetize.next.res.constants.CommonConst;
+import com.siaor.poetize.next.res.norm.CommonConst;
 import jakarta.annotation.PostConstruct;
 import jakarta.mail.MessagingException;
 import lombok.extern.slf4j.Slf4j;

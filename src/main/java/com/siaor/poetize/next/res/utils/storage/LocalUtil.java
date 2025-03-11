@@ -1,8 +1,8 @@
 package com.siaor.poetize.next.res.utils.storage;
 
 import cn.hutool.core.io.FileUtil;
-import com.siaor.poetize.next.repo.po.ResourcePO;
-import com.siaor.poetize.next.res.handle.PoetryRuntimeException;
+import com.siaor.poetize.next.res.repo.po.ResourcePO;
+import com.siaor.poetize.next.res.norm.exception.SysRuntimeException;
 import com.siaor.poetize.next.pow.ResourcePow;
 import com.siaor.poetize.next.res.utils.StringUtil;
 import com.siaor.poetize.next.app.vo.FileVO;
@@ -58,27 +58,27 @@ public class LocalUtil implements StoreService {
         if (!StringUtils.hasText(fileVO.getRelativePath()) ||
                 fileVO.getRelativePath().startsWith("/") ||
                 fileVO.getRelativePath().endsWith("/")) {
-            throw new PoetryRuntimeException("文件路径不合法！");
+            throw new SysRuntimeException("文件路径不合法！");
         }
 
         String path = fileVO.getRelativePath();
         if (path.contains("/")) {
             String[] split = path.split("/");
             if (split.length > 5) {
-                throw new PoetryRuntimeException("文件路径不合法！");
+                throw new SysRuntimeException("文件路径不合法！");
             }
             for (int i = 0; i < split.length - 1; i++) {
                 if (!StringUtil.isValidDirectoryName(split[i])) {
-                    throw new PoetryRuntimeException("文件路径不合法！");
+                    throw new SysRuntimeException("文件路径不合法！");
                 }
             }
             if (!StringUtil.isValidFileName(split[split.length - 1])) {
-                throw new PoetryRuntimeException("文件路径不合法！");
+                throw new SysRuntimeException("文件路径不合法！");
             }
         }
         String absolutePath = uploadUrl + path;
         if (FileUtil.exist(absolutePath)) {
-            throw new PoetryRuntimeException("文件已存在！");
+            throw new SysRuntimeException("文件已存在！");
         }
         try {
             File newFile = FileUtil.touch(absolutePath);
@@ -90,7 +90,7 @@ public class LocalUtil implements StoreService {
         } catch (IOException e) {
             log.error("文件上传失败：", e);
             FileUtil.del(absolutePath);
-            throw new PoetryRuntimeException("文件上传失败！");
+            throw new SysRuntimeException("文件上传失败！");
         }
     }
 

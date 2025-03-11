@@ -6,24 +6,24 @@ import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapp
 import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.siaor.poetize.next.res.aop.ResourceCheck;
-import com.siaor.poetize.next.res.config.PoetryResult;
-import com.siaor.poetize.next.res.constants.CommonConst;
-import com.siaor.poetize.next.repo.mapper.ArticleMapper;
-import com.siaor.poetize.next.repo.mapper.LabelMapper;
-import com.siaor.poetize.next.repo.mapper.SortMapper;
-import com.siaor.poetize.next.res.enums.CodeMsg;
-import com.siaor.poetize.next.res.enums.CommentTypeEnum;
-import com.siaor.poetize.next.res.enums.SysEnum;
+import com.siaor.poetize.next.res.oper.aop.ResourceCheck;
+import com.siaor.poetize.next.res.norm.ActResult;
+import com.siaor.poetize.next.res.norm.CommonConst;
+import com.siaor.poetize.next.res.repo.mapper.ArticleMapper;
+import com.siaor.poetize.next.res.repo.mapper.LabelMapper;
+import com.siaor.poetize.next.res.repo.mapper.SortMapper;
+import com.siaor.poetize.next.res.norm.ActCode;
+import com.siaor.poetize.next.res.norm.CommentTypeEnum;
+import com.siaor.poetize.next.res.norm.SysEnum;
 import com.siaor.poetize.next.pow.ArticlePow;
 import com.siaor.poetize.next.pow.UserPow;
-import com.siaor.poetize.next.repo.po.*;
+import com.siaor.poetize.next.res.repo.po.*;
 import com.siaor.poetize.next.res.utils.CommonQuery;
 import com.siaor.poetize.next.res.utils.PoetryUtil;
-import com.siaor.poetize.next.res.utils.cache.PoetryCache;
+import com.siaor.poetize.next.res.repo.cache.SysCache;
 import com.siaor.poetize.next.res.utils.mail.MailUtil;
 import com.siaor.poetize.next.res.utils.storage.ArticleFileUtil;
-import com.siaor.poetize.next.res.utils.storage.ArticleScanTask;
+import com.siaor.poetize.next.res.task.ArticleScanTask;
 import com.siaor.poetize.next.app.vo.ArticleVO;
 import com.siaor.poetize.next.app.vo.BaseRequestVO;
 import lombok.extern.slf4j.Slf4j;
@@ -82,9 +82,9 @@ public class ArticlePowPro extends ServiceImpl<ArticleMapper, ArticlePO> impleme
     private ArticleScanTask articleScanTask;
 
     @Override
-    public PoetryResult saveArticle(ArticleVO articleVO) {
+    public ActResult saveArticle(ArticleVO articleVO) {
         if (articleVO.getViewStatus() != null && !articleVO.getViewStatus() && !StringUtils.hasText(articleVO.getPassword())) {
-            return PoetryResult.fail("请设置文章密码！");
+            return ActResult.fail("请设置文章密码！");
         }
         ArticlePO articlePO = new ArticlePO();
         if (StringUtils.hasText(articleVO.getArticleCover())) {
@@ -107,7 +107,7 @@ public class ArticlePowPro extends ServiceImpl<ArticleMapper, ArticlePO> impleme
         articlePO.setUserId(PoetryUtil.getUserId());
         save(articlePO);
 
-        PoetryCache.remove(CommonConst.SORT_INFO);
+        SysCache.remove(CommonConst.SORT_INFO);
 
         try {
             if (articleVO.getViewStatus()) {
@@ -121,7 +121,7 @@ public class ArticlePowPro extends ServiceImpl<ArticleMapper, ArticlePO> impleme
                     LambdaQueryChainWrapper<LabelPO> wrapper = new LambdaQueryChainWrapper<>(labelMapper);
                     LabelPO labelPO = wrapper.select(LabelPO::getLabelName).eq(LabelPO::getId, articleVO.getLabelId()).one();
                     String text = getSubscribeMail(labelPO.getLabelName(), articleVO.getArticleTitle());
-                    WebInfoPO webInfoPO = (WebInfoPO) PoetryCache.get(CommonConst.WEB_INFO);
+                    WebInfoPO webInfoPO = (WebInfoPO) SysCache.get(CommonConst.WEB_INFO);
                     mailUtil.sendMailMessage(emails, "您有一封来自" + (webInfoPO == null ? "POETIZE" : webInfoPO.getWebName()) + "的回执！", text);
                 }
             }
@@ -132,11 +132,11 @@ public class ArticlePowPro extends ServiceImpl<ArticleMapper, ArticlePO> impleme
         //创建文章md文件
         articleFileUtil.create(articlePO);
 
-        return PoetryResult.success();
+        return ActResult.success();
     }
 
     private String getSubscribeMail(String labelName, String articleTitle) {
-        WebInfoPO webInfoPO = (WebInfoPO) PoetryCache.get(CommonConst.WEB_INFO);
+        WebInfoPO webInfoPO = (WebInfoPO) SysCache.get(CommonConst.WEB_INFO);
         String webName = (webInfoPO == null ? "POETIZE" : webInfoPO.getWebName());
         return String.format(mailUtil.getMailText(),
                 webName,
@@ -148,20 +148,20 @@ public class ArticlePowPro extends ServiceImpl<ArticleMapper, ArticlePO> impleme
     }
 
     @Override
-    public PoetryResult deleteArticle(Integer id) {
+    public ActResult deleteArticle(Integer id) {
         Integer userId = PoetryUtil.getUserId();
         lambdaUpdate().eq(ArticlePO::getId, id)
                 .eq(ArticlePO::getUserId, userId)
                 .remove();
-        PoetryCache.remove(CommonConst.SORT_INFO);
+        SysCache.remove(CommonConst.SORT_INFO);
         articleFileUtil.delete(userId, id);
-        return PoetryResult.success();
+        return ActResult.success();
     }
 
     @Override
-    public PoetryResult updateArticle(ArticleVO articleVO) {
+    public ActResult updateArticle(ArticleVO articleVO) {
         if (articleVO.getViewStatus() != null && !articleVO.getViewStatus() && !StringUtils.hasText(articleVO.getPassword())) {
-            return PoetryResult.fail("请设置文章密码！");
+            return ActResult.fail("请设置文章密码！");
         }
 
         Integer userId = PoetryUtil.getUserId();
@@ -193,21 +193,21 @@ public class ArticlePowPro extends ServiceImpl<ArticleMapper, ArticlePO> impleme
             updateChainWrapper.set(ArticlePO::getViewStatus, articleVO.getViewStatus());
         }
         updateChainWrapper.update();
-        PoetryCache.remove(CommonConst.SORT_INFO);
+        SysCache.remove(CommonConst.SORT_INFO);
 
         ArticlePO articlePO = new ArticlePO();
         BeanUtils.copyProperties(articleVO, articlePO);
         articleFileUtil.update(articlePO);
-        return PoetryResult.success();
+        return ActResult.success();
     }
 
     @Override
-    public PoetryResult reload() {
+    public ActResult reload() {
         Integer userId = PoetryUtil.getUserId();
         //获取全部文章文件信息
         List<String> fileList = articleFileUtil.list(userId);
         if (fileList.isEmpty()) {
-            return PoetryResult.success();
+            return ActResult.success();
         }
 
         //加载到任务列表
@@ -216,7 +216,7 @@ public class ArticlePowPro extends ServiceImpl<ArticleMapper, ArticlePO> impleme
         //启动重载任务
         taskHandle(userId);
 
-        return PoetryResult.success("正在为您重载文章，数量："+fileList.size());
+        return ActResult.success("正在为您重载文章，数量："+fileList.size());
     }
 
     private void taskHandle(Integer userId) {
@@ -253,7 +253,7 @@ public class ArticlePowPro extends ServiceImpl<ArticleMapper, ArticlePO> impleme
     }
 
     @Override
-    public PoetryResult<Page> listArticle(BaseRequestVO baseRequestVO) {
+    public ActResult<Page> listArticle(BaseRequestVO baseRequestVO) {
         List<Integer> ids = null;
         List<List<Integer>> idList = null;
         if (StringUtils.hasText(baseRequestVO.getArticleSearch())) {
@@ -261,7 +261,7 @@ public class ArticlePowPro extends ServiceImpl<ArticleMapper, ArticlePO> impleme
             ids = idList.stream().flatMap(Collection::stream).collect(Collectors.toList());
             if (CollectionUtils.isEmpty(ids)) {
                 baseRequestVO.setRecords(new ArrayList<>());
-                return PoetryResult.success(baseRequestVO);
+                return ActResult.success(baseRequestVO);
             }
         }
 
@@ -310,26 +310,26 @@ public class ArticlePowPro extends ServiceImpl<ArticleMapper, ArticlePO> impleme
             collect.addAll(contents);
             baseRequestVO.setRecords(collect);
         }
-        return PoetryResult.success(baseRequestVO);
+        return ActResult.success(baseRequestVO);
     }
 
     @Override
     @ResourceCheck(CommonConst.RESOURCE_ARTICLE_DOC)
-    public PoetryResult<ArticleVO> getArticleById(Integer id, String password) {
+    public ActResult<ArticleVO> getArticleById(Integer id, String password) {
         LambdaQueryChainWrapper<ArticlePO> lambdaQuery = lambdaQuery();
         lambdaQuery.eq(ArticlePO::getId, id);
 
         ArticlePO articlePO = lambdaQuery.one();
         if (articlePO == null) {
-            return PoetryResult.fail(CodeMsg.RES_LOSE);
+            return ActResult.fail(ActCode.RES_LOSE);
         }
 
         if (!articlePO.getViewStatus()) {
             if (!StringUtils.hasText(password)) {
-                return PoetryResult.fail(CodeMsg.PWD_NEED, StringUtils.hasText(articlePO.getTips()) ? articlePO.getTips() : CodeMsg.PWD_NEED.getMsg());
+                return ActResult.fail(ActCode.PWD_NEED, StringUtils.hasText(articlePO.getTips()) ? articlePO.getTips() : ActCode.PWD_NEED.getMsg());
             }
             if (!articlePO.getPassword().equals(password)) {
-                return PoetryResult.fail(CodeMsg.PWD_ERROR);
+                return ActResult.fail(ActCode.PWD_ERROR);
             }
         }
 
@@ -339,11 +339,11 @@ public class ArticlePowPro extends ServiceImpl<ArticleMapper, ArticlePO> impleme
             articlePO.setVideoUrl(SecureUtil.aes(CommonConst.CRYPOTJS_KEY.getBytes(StandardCharsets.UTF_8)).encryptBase64(articlePO.getVideoUrl()));
         }
         ArticleVO articleVO = buildArticleVO(articlePO, false);
-        return PoetryResult.success(articleVO);
+        return ActResult.success(articleVO);
     }
 
     @Override
-    public PoetryResult<Page> listAdminArticle(BaseRequestVO baseRequestVO, Boolean isBoss) {
+    public ActResult<Page> listAdminArticle(BaseRequestVO baseRequestVO, Boolean isBoss) {
         LambdaQueryChainWrapper<ArticlePO> lambdaQuery = lambdaQuery();
         lambdaQuery.select(ArticlePO.class, a -> !a.getColumn().equals("article_content"));
         if (!isBoss) {
@@ -379,31 +379,31 @@ public class ArticlePowPro extends ServiceImpl<ArticleMapper, ArticlePO> impleme
             }).collect(Collectors.toList());
             baseRequestVO.setRecords(collect);
         }
-        return PoetryResult.success(baseRequestVO);
+        return ActResult.success(baseRequestVO);
     }
 
     @Override
-    public PoetryResult<ArticleVO> getArticleByIdForUser(Integer id) {
+    public ActResult<ArticleVO> getArticleByIdForUser(Integer id) {
         LambdaQueryChainWrapper<ArticlePO> lambdaQuery = lambdaQuery();
         lambdaQuery.eq(ArticlePO::getId, id).eq(ArticlePO::getUserId, PoetryUtil.getUserId());
         ArticlePO articlePO = lambdaQuery.one();
         if (articlePO == null) {
-            return PoetryResult.fail("文章不存在！");
+            return ActResult.fail("文章不存在！");
         }
         ArticleVO articleVO = new ArticleVO();
         BeanUtils.copyProperties(articlePO, articleVO);
-        return PoetryResult.success(articleVO);
+        return ActResult.success(articleVO);
     }
 
     @Override
-    public PoetryResult<Map<Integer, List<ArticleVO>>> listSortArticle() {
-        Map<Integer, List<ArticleVO>> result = (Map<Integer, List<ArticleVO>>) PoetryCache.get(CommonConst.SORT_ARTICLE_LIST);
+    public ActResult<Map<Integer, List<ArticleVO>>> listSortArticle() {
+        Map<Integer, List<ArticleVO>> result = (Map<Integer, List<ArticleVO>>) SysCache.get(CommonConst.SORT_ARTICLE_LIST);
         if (result != null) {
-            return PoetryResult.success(result);
+            return ActResult.success(result);
         }
 
         synchronized (CommonConst.SORT_ARTICLE_LIST.intern()) {
-            result = (Map<Integer, List<ArticleVO>>) PoetryCache.get(CommonConst.SORT_ARTICLE_LIST);
+            result = (Map<Integer, List<ArticleVO>>) SysCache.get(CommonConst.SORT_ARTICLE_LIST);
             if (result == null) {
                 Map<Integer, List<ArticleVO>> map = new HashMap<>();
 
@@ -432,10 +432,10 @@ public class ArticlePowPro extends ServiceImpl<ArticleMapper, ArticlePO> impleme
                     map.put(sortPO.getId(), articleVOList);
                 }
 
-                PoetryCache.put(CommonConst.SORT_ARTICLE_LIST, map, CommonConst.TOKEN_INTERVAL);
-                return PoetryResult.success(map);
+                SysCache.put(CommonConst.SORT_ARTICLE_LIST, map, CommonConst.TOKEN_INTERVAL);
+                return ActResult.success(map);
             } else {
-                return PoetryResult.success(result);
+                return ActResult.success(result);
             }
         }
     }

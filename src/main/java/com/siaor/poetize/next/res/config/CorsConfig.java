@@ -9,7 +9,12 @@ import org.springframework.web.filter.CorsFilter;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * 跨域配置
+ *
+ * @author Siaor
+ * @since 2025-03-11 02:02:46
+ */
 @Configuration
 public class CorsConfig {
 

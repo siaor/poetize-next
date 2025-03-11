@@ -1,8 +1,8 @@
 package com.siaor.poetize.next.app.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.siaor.poetize.next.repo.po.LabelPO;
-import com.siaor.poetize.next.repo.po.SortPO;
+import com.siaor.poetize.next.res.repo.po.LabelPO;
+import com.siaor.poetize.next.res.repo.po.SortPO;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
