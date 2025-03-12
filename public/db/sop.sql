@@ -1,17 +1,15 @@
--- 【数据库初始化创建SOP脚本】
+-- 【手动创建数据库SOP脚本】application.yml设置sys:auto-init: true时，会自动创建表结构、初始化数据
+
+-- 非h2数据库需要手动创建数据库，第2、3步可自动创建
 
 -- 1.创建数据库，数据库名可自定义
-CREATE DATABASE IF NOT EXISTS `pn_blog` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+CREATE DATABASE IF NOT EXISTS `poetize_next` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
 -- 切换到数据库
-USE `pn_blog`;
+USE `poetize_next`;
 
--- 2.创建表结构
-source schema.sql;
+-- 2.创建表结构：resource/db/mysql/schema.sql
+-- source schema.sql;
 
--- 初始化数据
-source data.sql;
-
--- 初始化安装记录，版本号为update.sql的最后一次更新版本号
-INSERT INTO `sys_update_log` (`create_time`, `update_time`, `version`, `note`)
-VALUES (now(), now(), '2025022301', '系统初始化安装完成');
+-- 3.初始化数据：resource/db/mysql/data.sql
+-- source data.sql;

@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-@TableName("user")
+@TableName("sys_user")
 public class UserPO implements Serializable {
 
     private static final long serialVersionUID = 1L;

@@ -1,8 +1,12 @@
 -- 【基础数据初始化脚本】
 
+-- 初始化安装记录，版本号为update.sql的最后一次更新版本号
+INSERT INTO `sys_update_log` (`create_time`, `update_time`, `version`, `note`)
+VALUES (now(), now(), '2025031201', '系统初始化安装完成');
+
 -- 默认管理员信息，账号admin，密码admin，todo:强化密码加密规则，现在为md5('明文密码')
-INSERT INTO `user`(`id`, `username`, `password`, `phone_number`, `email`, `user_status`, `gender`, `open_id`, `admire`,
-                   `subscribe`, `avatar`, `introduction`, `user_type`, `update_by`, `deleted`)
+INSERT INTO `sys_user`(`id`, `username`, `password`, `phone_number`, `email`, `user_status`, `gender`, `open_id`, `admire`,
+                       `subscribe`, `avatar`, `introduction`, `user_type`, `update_by`, `deleted`)
 VALUES (1, 'admin', '21232f297a57a5a743894a0e4a801fc3', '', '', 1, 1, '', '', '', '', '', 0, 'admin', 0);
 
 -- 默认网站配置
@@ -53,4 +57,4 @@ INSERT INTO `resource_path` (`title`, `classify`, `cover`, `url`, `introduction`
 VALUES ('POETIZE', '🥇友情链接', 'https://s1.ax1x.com/2022/11/10/z9VlHs.png', 'https://gitee.com/littledokey/poetize',
         '遇见最美博客，诗意~', 'friendUrl', 1, '', now()),
        ('POETIZE-NEXT', '🥇友情链接', '/res/sys/poetize-next.png', 'https://gitee.com/siaor/poetize-next',
-        '遇见最美博客，下一站，出发！诗与远方~', 'friendUrl', 1, '', now());
+        '遇见最美博客，下一站！诗与远方~', 'friendUrl', 1, '', now());

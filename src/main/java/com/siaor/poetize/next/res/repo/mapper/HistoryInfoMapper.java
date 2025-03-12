@@ -43,7 +43,7 @@ public interface HistoryInfoMapper extends BaseMapper<HistoryInfoPO> {
      */
     @Select("select ip, user_id, nation, province" +
             " from history_info" +
-            " where create_time >= (now() - interval 24 hour)")
+            " where create_time >= (now() - interval '24' hour)")
     List<Map<String, Object>> getHistoryBy24Hour();
 
     /**

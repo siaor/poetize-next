@@ -6,15 +6,6 @@ server:
     max-http-form-post-size: 120MB
     connection-timeout: 60000
 
-mybatis-plus:
-  mapper-locations: classpath*:mapper/**/*.xml
-#  configuration:
-#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-  global-config:
-    db-config:
-      logic-delete-value: 1
-      logic-not-delete-value: 0
-
 spring:
   servlet:
     multipart:
@@ -36,11 +27,30 @@ spring:
             class: javax.net.ssl.SSLSocketFactory
           ssl:
             enable: true
-
+  # 默认使用H2数据库
   datasource:
+    driver-class-name: org.h2.Driver
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:h2:file:./data/poetize_next;AUTO_SERVER=TRUE;
     username: root
     password: root
-    url: jdbc:mysql://localhost:3306/pn_blog?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
-    type: com.alibaba.druid.pool.DruidDataSource
-    driver-class-name: com.mysql.cj.jdbc.Driver
+  # 支持使用MySQL数据库
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    type: com.zaxxer.hikari.HikariDataSource
+#    url: jdbc:mysql://localhost:3306/poetize_next?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+#    username: root
+#    password: root
 
+# 持久化框架
+mybatis-plus:
+  mapper-locations: classpath*:mapper/**/*.xml
+  #  configuration:
+  #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+sys:
+  auto-init: true
