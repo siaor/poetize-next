@@ -14,7 +14,7 @@
     <!-- 【项目信息】 -->
     <groupId>com.siaor</groupId>
     <artifactId>poetize-next</artifactId>
-    <version>2.0.250310.1</version>
+    <version>2.0.250313.1</version>
     <name>${project.artifactId}</name>
     <description>POETIZE-NEXT 最美博客-下一站！诗与远方~</description>
     <url>https://github.com/siaor/poetize-next</url>
@@ -163,19 +163,11 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
-    <!-- 【构建相关配置】 -->
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
-
+    <!-- Maven扩展仓库 -->
     <repositories>
         <repository>
             <id>public</id>
@@ -187,6 +179,7 @@
         </repository>
     </repositories>
 
+    <!-- Maven扩展插件仓库 -->
     <pluginRepositories>
         <pluginRepository>
             <id>public</id>
@@ -200,4 +193,54 @@
             </snapshots>
         </pluginRepository>
     </pluginRepositories>
+
+    <!-- 【构建相关配置】 -->
+    <build>
+        <!-- 打包后jar名称 -->
+        <finalName>${project.artifactId}</finalName>
+        <!-- Maven打包插件 -->
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <!-- MANIFEST.MF 中 Class-Path 加入前缀 -->
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <!-- jar包不包含唯一版本标识 -->
+                            <useUniqueVersions>false</useUniqueVersions>
+                            <!-- 指定入口类 -->
+                            <mainClass>com.siaor.poetize.next.PoetizeNextApplication</mainClass>
+                        </manifest>
+                    </archive>
+                    <outputDirectory>${project.build.directory}</outputDirectory>
+                </configuration>
+            </plugin>
+
+            <!-- Maven自定义打包构建插件 -->
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <!-- 是否将构建标识附加到打包文件名后 -->
+                    <appendAssemblyId>true</appendAssemblyId>
+                    <descriptors>
+                        <!-- 项目所在目录配置文件的 assembly.xml文件 -->
+                        <descriptor>assembly.xml</descriptor>
+                    </descriptors>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>${project.version}</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>

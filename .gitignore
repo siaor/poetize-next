@@ -31,6 +31,12 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### POETIZE NEXT ###
+data/*
+!data/ip2region.xdb
 logs
-public/res
-data
+public/res/*
+!public/res/sys/
+public/web
+public/im

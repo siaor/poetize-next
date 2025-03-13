@@ -5,26 +5,32 @@ INSERT INTO `sys_update_log` (`create_time`, `update_time`, `version`, `note`)
 VALUES (now(), now(), '2025031201', '系统初始化安装完成');
 
 -- 默认管理员信息，账号admin，密码admin，todo:强化密码加密规则，现在为md5('明文密码')
-INSERT INTO `sys_user`(`id`, `username`, `password`, `phone_number`, `email`, `user_status`, `gender`, `open_id`, `admire`,
+INSERT INTO `sys_user`(`id`, `username`, `password`, `phone_number`, `email`, `user_status`, `gender`, `open_id`,
+                       `admire`,
                        `subscribe`, `avatar`, `introduction`, `user_type`, `update_by`, `deleted`)
 VALUES (1, 'admin', '21232f297a57a5a743894a0e4a801fc3', '', '', 1, 1, '', '', '', '', '', 0, 'admin', 0);
 
 -- 默认网站配置
 INSERT INTO `web_info`(`id`, `web_name`, `web_title`, `notices`, `footer`, `background_image`, `avatar`,
                        `random_avatar`, `random_name`, `random_cover`, `waifu_json`, `status`)
-VALUES (1, '诗与远方', 'POETIZE-NEXT', '[]', '春风轻抚栏边柳，露点晶莹华彩延。', '', '', '[]', '[]', '[]', '{}', 1);
+VALUES (1, '诗与远方', 'POETIZE-NEXT', '["初始化成功！快进入后台进行个性化设置吧！"]', '春风轻抚栏边柳，露点晶莹华彩延。',
+        '/res/sys/bg/1.jpg', '/res/sys/avatar/7.jpg',
+        '["/res/sys/avatar/1.jpg","/res/sys/avatar/2.jpg","/res/sys/avatar/3.jpg","/res/sys/avatar/4.jpg","/res/sys/avatar/5.jpg","/res/sys/avatar/6.jpg","/res/sys/avatar/7.jpg"]',
+        '["唐三","小舞","戴沐白","奥斯卡","马红俊","宁荣荣","朱竹清"]',
+        '["/res/sys/bg/1.jpg","/res/sys/bg/2.jpg","/res/sys/bg/3.jpg","/res/sys/bg/4.jpg","/res/sys/bg/5.jpg","/res/sys/bg/6.jpg","/res/sys/bg/7.jpg"]',
+        '{}', 1);
 
 -- 默认家庭配置
 INSERT INTO `family` (`id`, `user_id`, `bg_cover`, `man_cover`, `woman_cover`, `man_name`, `woman_name`, `timing`,
                       `countdown_title`, `countdown_time`, `status`, `family_info`, `like_count`, `create_time`,
                       `update_time`)
-VALUES (1, 1, '/res/sys/love.jpg', '/res/sys/avatar1.jpg', '/res/sys/avatar0.jpg', '司马相如', '卓文君',
+VALUES (1, 1, '/res/sys/love/love.jpg', '/res/sys/avatar/2.jpg', '/res/sys/avatar/1.jpg', '司马相如', '卓文君',
         '1970-01-01 00:00:00', '春节倒计时',
         '2026-02-17 00:00:00', 1, '', 0, now(), now());
 
 -- 默认聊天室配置
-INSERT INTO `im_chat_group` (`id`, `group_name`, `master_user_id`, `introduction`, `notice`, `in_type`)
-VALUES (-1, '公共聊天室', 1, '公共聊天室', '欢迎光临！', 0);
+INSERT INTO `im_chat_group` (`id`, `group_name`, `master_user_id`, `introduction`, `notice`, `in_type`, `avatar`)
+VALUES (-1, '公共聊天室', 1, '公共聊天室', '欢迎光临！', 0, '/res/sys/avatar/3.jpg');
 
 insert into `im_chat_group_user` (`id`, `group_id`, `user_id`, `admin_flag`, `user_status`)
 values (1, -1, 1, 1, 1);
@@ -39,7 +45,7 @@ VALUES ('邮箱-发件号', 'spring.mail.username', '', '1'),
        ('默认存储平台', 'store.type', 'local', '2'),
        ('本地存储-启用状态', 'local.enable', 'true', '2'),
        ('本地存储-上传文件根目录', 'local.uploadUrl', '/app/blog/public/res/', '1'),
-       ('本地存储-上传文章文件目录', 'local.articleFilePath', '/app/blog/private/res/article/', '1'),
+       ('本地存储-上传文章文件目录', 'local.articleFilePath', '/app/blog/data/article/', '1'),
        ('本地存储-下载前缀', 'local.downloadUrl', '/res/', '2'),
        ('静态资源-访问前缀', 'webStaticResourcePrefix', '/res/', '2'),
        ('七牛云-启用状态', 'qiniu.enable', 'false', '2'),
@@ -58,3 +64,15 @@ VALUES ('POETIZE', '🥇友情链接', 'https://s1.ax1x.com/2022/11/10/z9VlHs.pn
         '遇见最美博客，诗意~', 'friendUrl', 1, '', now()),
        ('POETIZE-NEXT', '🥇友情链接', '/res/sys/poetize-next.png', 'https://gitee.com/siaor/poetize-next',
         '遇见最美博客，下一站！诗与远方~', 'friendUrl', 1, '', now());
+
+-- 默认分类
+INSERT INTO `sort` (`id`, `sort_name`, `sort_description`, `sort_type`, `priority`)
+VALUES (1, '诗与远方', '这个世界不止苟且、还有诗和远方', 0, 1),
+(2, '博采方长', '细枝末节藏智慧，累积点滴成江海‌', 0, 2);
+
+-- 默认标签
+INSERT INTO `label` (`id`, `sort_id`, `label_name`, `label_description`)
+VALUES (1, 1, '诗意', '诗意是心灵的风景'),
+       (2, 1, '远方', '远方是灵魂的归宿'),
+       (3, 2, '博采', '兼容并蓄，取其精华，去其糟粕'),
+       (4, 2, '方长', '海纳百川，有容乃大');

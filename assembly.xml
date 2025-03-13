@@ -1,0 +1,100 @@
+<assembly>
+    <!-- 标识符（pom中开启appendAssemblyId，会附加该名称到打包文件名中，一般用作区分测试、生产环境、版本） -->
+    <id>${project.version}</id>
+    <!-- 打包的类型，如果有N个，将会打N个类型的包 -->
+    <formats>
+        <format>tar.gz</format>
+        <!--<format>zip</format>-->
+    </formats>
+    <!-- 压缩包下是否生成和项目名相同的根目录 -->
+    <includeBaseDirectory>true</includeBaseDirectory>
+    <!-- 用来设置一组文件在打包时的属性。-->
+    <fileSets>
+        <!-- 0755->即用户具有读/写/执行权限，组用户和其它用户具有读写权限；-->
+        <!-- 0644->即用户具有读写权限，组用户和其它用户具有只读权限；-->
+        <!-- 【1.输出自定义脚本】将bin目录下的jar启动脚本输出到打包后的目录中 -->
+        <fileSet>
+            <!--lineEnding选项可用于控制给定的行结束文件 -->
+            <lineEnding>unix</lineEnding>
+            <directory>${basedir}/bin</directory>
+            <outputDirectory>${file.separator}/bin</outputDirectory>
+            <fileMode>0755</fileMode>
+            <includes>
+                <include>**.sh</include>
+                <include>**.bat</include>
+            </includes>
+        </fileSet>
+        <!-- 【2.输出项目配置文件】把项目的配置文件，打包进压缩文件的config目录 -->
+        <fileSet>
+            <directory>${basedir}/src/main/resources</directory>
+            <outputDirectory>config</outputDirectory>
+            <fileMode>0644</fileMode>
+            <includes>
+                <include>*.properties</include>
+                <include>*.yml</include>
+                <include>*.xml</include>
+                <!--<include>mapper/*.xml</include>-->
+            </includes>
+        </fileSet>
+        <!-- 【3.输出资源：自定义静态资源】 -->
+        <fileSet>
+            <directory>${basedir}/public/res/sys</directory>
+            <outputDirectory>${file.separator}/public/web/res/sys</outputDirectory>
+            <fileMode>0644</fileMode>
+            <includes>
+                <include>*</include>
+            </includes>
+        </fileSet>
+        <!-- 【4.输出资源：离线IP数据】 -->
+        <fileSet>
+            <directory>${basedir}/data</directory>
+            <outputDirectory>${file.separator}/data</outputDirectory>
+            <fileMode>0644</fileMode>
+            <includes>
+                <include>ip2region.xdb</include>
+            </includes>
+        </fileSet>
+        <!-- 【5.输出资源：博客前端项目打包文件】 -->
+        <fileSet>
+            <directory>${basedir}/public/web</directory>
+            <outputDirectory>${file.separator}/public/web</outputDirectory>
+            <fileMode>0644</fileMode>
+            <includes>
+                <include>*</include>
+            </includes>
+        </fileSet>
+        <!-- 【6.输出资源：微聊前端项目打包文件】 -->
+        <fileSet>
+            <directory>${basedir}/public/im</directory>
+            <outputDirectory>${file.separator}/public/web/im</outputDirectory>
+            <fileMode>0644</fileMode>
+            <includes>
+                <include>*</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+    <!-- 【输出项目依赖jar】项目依赖的jar包输出配置，统一输出到lib目录 -->
+    <dependencySets>
+        <!-- 包含provided类型的依赖 -->
+        <!--<dependencySet>
+            <unpack>false</unpack>
+            <useProjectArtifact>true</useProjectArtifact>
+            <outputDirectory>lib</outputDirectory>
+            <scope>provided</scope>
+        </dependencySet>-->
+        <!-- 包含system类型的依赖 -->
+        <dependencySet>
+            <unpack>false</unpack>
+            <useProjectArtifact>true</useProjectArtifact>
+            <outputDirectory>lib</outputDirectory>
+            <scope>system</scope>
+        </dependencySet>
+        <!-- 包含runtime类型的依赖 -->
+        <dependencySet>
+            <unpack>false</unpack>
+            <useProjectArtifact>true</useProjectArtifact>
+            <outputDirectory>lib</outputDirectory>
+            <scope>runtime</scope>
+        </dependencySet>
+    </dependencySets>
+</assembly>

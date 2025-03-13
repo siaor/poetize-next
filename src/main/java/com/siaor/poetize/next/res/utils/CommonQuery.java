@@ -12,6 +12,7 @@ import org.apache.commons.io.IOUtils;
 import org.lionsoul.ip2region.xdb.Searcher;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -24,6 +25,10 @@ import java.util.stream.Collectors;
 
 @Component
 public class CommonQuery {
+
+    @Value("${sys.ip2region}")
+    private String ip2region;
+
     @Autowired
     private CommentMapper commentMapper;
 
@@ -50,7 +55,7 @@ public class CommonQuery {
     @PostConstruct
     public void init() {
         try {
-            searcher = Searcher.newWithBuffer(IOUtils.toByteArray(new ClassPathResource("ip2region.xdb").getInputStream()));
+            searcher = Searcher.newWithBuffer(IOUtils.toByteArray(new ClassPathResource(ip2region).getInputStream()));
         } catch (Exception e) {
         }
     }
