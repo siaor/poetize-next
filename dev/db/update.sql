@@ -15,3 +15,12 @@ INSERT INTO `sys_update_log` (`create_time`, `update_time`, `version`, `note`)
 VALUES (now(), now(), '2025031201', '用户表名称变更');
 
 ALTER TABLE `user` RENAME TO `sys_user`;
+
+-- >>>>>>>【更新日志】<<<<<<<
+INSERT INTO `sys_update_log` (`create_time`, `update_time`, `version`, `note`)
+VALUES (now(), now(), '2025031501', '本地文件上传配置变更');
+
+UPDATE `sys_config` SET `config_key` = 'local.resPath' WHERE `config_key` = 'local.uploadUrl';
+UPDATE `sys_config` SET `config_key` = 'local.articlePath' WHERE `config_key` = 'local.articleFilePath';
+UPDATE `sys_config` SET `config_key` = 'local.visitUrl' WHERE `config_key` = 'local.downloadUrl';
+DELETE FROM `sys_config` WHERE `config_key` = 'webStaticResourcePrefix';

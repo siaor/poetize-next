@@ -25,7 +25,7 @@
 
 blog博客文章、相册、工具、友链、聊天室 IM
 
-![POETIZE-NEXT](public/doc/img/home.jpg)
+![POETIZE-NEXT](./dev/doc/img/home.jpg)
 
  </div>
 
@@ -172,7 +172,7 @@ POETIZE-NEXT全新升级！
 
 <center>🏠首页 ↓</center>
 
-![POETIZE-NEXT](public/doc/img/show/1.png)
+![POETIZE-NEXT](./dev/doc/img/show/1.png)
 
 <center>主要展示个人博客、文章</center>
 
@@ -180,7 +180,7 @@ POETIZE-NEXT全新升级！
 
 <center>💒家 ↓</center>
 
-![POETIZE-NEXT](public/doc/img/show/2.png)
+![POETIZE-NEXT](./dev/doc/img/show/2.png)
 
 <center>狗粮满天飞</center>
 
@@ -188,7 +188,7 @@ POETIZE-NEXT全新升级！
 
 <center>💒文章 ↓</center>
 
-![POETIZE-NEXT](public/doc/img/show/3.png)
+![POETIZE-NEXT](./dev/doc/img/show/3.png)
 
 <center>博客文章的详情页面</center>
 
@@ -196,7 +196,7 @@ POETIZE-NEXT全新升级！
 
 <center>💒百宝箱 ↓</center>
 
-![POETIZE-NEXT](public/doc/img/show/4.png)
+![POETIZE-NEXT](./dev/doc/img/show/4.png)
 
 <center>友链、个人音乐库、收藏的网站资源</center>
 
@@ -204,7 +204,7 @@ POETIZE-NEXT全新升级！
 
 <center>🌳树洞 ↓</center>
 
-![POETIZE-NEXT](public/doc/img/show/5.png)
+![POETIZE-NEXT](./dev/doc/img/show/5.png)
 
 <center>不用登录，任何人都可以留言</center>
 
@@ -212,7 +212,7 @@ POETIZE-NEXT全新升级！
 
 <center>💒微聊 ↓</center>
 
-![POETIZE-NEXT](public/doc/img/show/6.png)
+![POETIZE-NEXT](./dev/doc/img/show/6.png)
 
 <center>需要登录，可以聊天吹牛</center>
 
@@ -220,7 +220,7 @@ POETIZE-NEXT全新升级！
 
 <center>💒旅拍 ↓</center>
 
-![POETIZE-NEXT](public/doc/img/show/7.png)
+![POETIZE-NEXT](./dev/doc/img/show/7.png)
 
 <center>展示旅行照片</center>
 
@@ -228,7 +228,7 @@ POETIZE-NEXT全新升级！
 
 <center>💒后台 ↓</center>
 
-![POETIZE-NEXT](public/doc/img/show/8.png)
+![POETIZE-NEXT](./dev/doc/img/show/8.png)
 
 <center>管理文章、用户、系统配置等</center>
 
@@ -236,15 +236,15 @@ POETIZE-NEXT全新升级！
 
 <center>💒移动端-首页 ↓</center>
 
-![POETIZE-NEXT](public/doc/img/show/9.png)
+![POETIZE-NEXT](./dev/doc/img/show/9.png)
 
 <center>💒移动端-文章 ↓</center>
 
-![POETIZE-NEXT](public/doc/img/show/10.png)
+![POETIZE-NEXT](./dev/doc/img/show/10.png)
 
 <center>💒移动端-菜单 ↓</center>
 
-![POETIZE-NEXT](public/doc/img/show/11.png)
+![POETIZE-NEXT](./dev/doc/img/show/11.png)
 
 <center>移动端自适应，功能一样</center>
 
@@ -253,7 +253,7 @@ POETIZE-NEXT全新升级！
 ## 请作者喝咖啡
 
 ---
-![POETIZE-NEXT](public/doc/img/pay.jpg)
+![POETIZE-NEXT](./dev/doc/img/pay.jpg)
 
 <div align="center" style="color: rgb(234,94,67);text-align: center">
 *你随手赞助的咖啡会让人兴奋得睡不着觉，一拍大腿！又出一个新功能！*

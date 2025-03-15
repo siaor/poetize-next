@@ -14,7 +14,7 @@
     <!-- 【项目信息】 -->
     <groupId>com.siaor</groupId>
     <artifactId>poetize-next</artifactId>
-    <version>2.0.250313.1</version>
+    <version>2.0.250315.1</version>
     <name>${project.artifactId}</name>
     <description>POETIZE-NEXT 最美博客-下一站！诗与远方~</description>
     <url>https://github.com/siaor/poetize-next</url>

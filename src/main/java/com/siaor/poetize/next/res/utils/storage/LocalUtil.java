@@ -23,11 +23,11 @@ import java.util.List;
 @ConditionalOnProperty(name = "local.enable", havingValue = "true")
 public class LocalUtil implements StoreService {
 
-    @Value("${local.uploadUrl}")
-    private String uploadUrl;
+    @Value("${local.resPath}")
+    private String resPath;
 
-    @Value("${local.downloadUrl}")
-    private String downloadUrl;
+    @Value("${local.visitUrl}")
+    private String visitUrl;
 
     @Autowired
     private ResourcePow resourcePow;
@@ -39,7 +39,7 @@ public class LocalUtil implements StoreService {
         }
 
         for (String filePath : files) {
-            File file = new File(filePath.replace(downloadUrl, uploadUrl));
+            File file = new File(filePath.replace(visitUrl, resPath));
             if (file.exists() && file.isFile()) {
                 if (file.delete()) {
                     log.info("文件删除成功：" + filePath);
@@ -76,7 +76,7 @@ public class LocalUtil implements StoreService {
                 throw new SysRuntimeException("文件路径不合法！");
             }
         }
-        String absolutePath = uploadUrl + path;
+        String absolutePath = resPath + path;
         if (FileUtil.exist(absolutePath)) {
             throw new SysRuntimeException("文件已存在！");
         }
@@ -85,7 +85,7 @@ public class LocalUtil implements StoreService {
             fileVO.getFile().transferTo(newFile);
             FileVO result = new FileVO();
             result.setAbsolutePath(absolutePath);
-            result.setVisitPath(downloadUrl + path);
+            result.setVisitPath(visitUrl + path);
             return result;
         } catch (IOException e) {
             log.error("文件上传失败：", e);

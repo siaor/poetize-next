@@ -53,10 +53,6 @@ public class ActResult<T> implements Serializable {
         return new ActResult(data);
     }
 
-    public static <T> ActResult<T> success(String message) {
-        return new ActResult(200, message);
-    }
-
     public static <T> ActResult<T> success() {
         return new ActResult();
     }

@@ -36,16 +36,7 @@
                 <!--<include>mapper/*.xml</include>-->
             </includes>
         </fileSet>
-        <!-- 【3.输出资源：自定义静态资源】 -->
-        <fileSet>
-            <directory>${basedir}/public/res/sys</directory>
-            <outputDirectory>${file.separator}/public/web/res/sys</outputDirectory>
-            <fileMode>0644</fileMode>
-            <includes>
-                <include>*</include>
-            </includes>
-        </fileSet>
-        <!-- 【4.输出资源：离线IP数据】 -->
+        <!-- 【3.输出资源：离线IP数据】 -->
         <fileSet>
             <directory>${basedir}/data</directory>
             <outputDirectory>${file.separator}/data</outputDirectory>
@@ -54,22 +45,22 @@
                 <include>ip2region.xdb</include>
             </includes>
         </fileSet>
-        <!-- 【5.输出资源：博客前端项目打包文件】 -->
+        <!-- 【4.输出资源：博客前端项目打包文件】 -->
         <fileSet>
             <directory>${basedir}/public/web</directory>
             <outputDirectory>${file.separator}/public/web</outputDirectory>
             <fileMode>0644</fileMode>
             <includes>
-                <include>*</include>
+                <include>**/*</include>
             </includes>
         </fileSet>
-        <!-- 【6.输出资源：微聊前端项目打包文件】 -->
+        <!-- 【5.输出资源：微聊前端项目打包文件】 -->
         <fileSet>
             <directory>${basedir}/public/im</directory>
             <outputDirectory>${file.separator}/public/web/im</outputDirectory>
             <fileMode>0644</fileMode>
             <includes>
-                <include>*</include>
+                <include>**/*</include>
             </includes>
         </fileSet>
     </fileSets>

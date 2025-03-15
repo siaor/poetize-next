@@ -18,8 +18,9 @@ jvmOpts="-Xms512m -Xmx1024m"
 cd "$appPath" || exit
 
 # 启动应用
-nohup $javaExe -server $jvmOpts -Dfile.encoding=UTF-8 -cp "$appPath/lib/*" "$appStarter" &
+nohup $javaExe -server $jvmOpts -Dfile.encoding=UTF-8 -cp "$appPath/lib/*" "$appStarter" >/dev/null 2>&1 &
 
 # 获取应用的进程ID以便后续可能的操作
-PID=$!
-echo "PoetizeNext启动成功！PID: $PID"
+appPid=$!
+echo $appPid > app.pid
+echo "PoetizeNext启动成功！PID: $appPid"

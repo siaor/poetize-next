@@ -25,8 +25,8 @@ import java.util.regex.Pattern;
 @Component
 public class ArticleFileUtil {
 
-    @Value("${local.articleFilePath}")
-    private String articleFilePath;
+    @Value("${local.articlePath}")
+    private String articlePath;
 
     /**
      * 创建文章md文件
@@ -35,13 +35,13 @@ public class ArticleFileUtil {
      * @since 2025-02-23 05:07:53
      */
     public void create(ArticlePO articlePO) {
-        if (articlePO == null || articlePO.getId() == null || !StringUtils.hasText(articleFilePath)) {
+        if (articlePO == null || articlePO.getId() == null || !StringUtils.hasText(articlePath)) {
             log.error("创建文章文件失败");
             return;
         }
 
         String fileName = articlePO.getId() + "." + articlePO.getArticleTitle() + ".md";
-        String filePath = articleFilePath + articlePO.getUserId() + FileSystems.getDefault().getSeparator() + fileName;
+        String filePath = articlePath + articlePO.getUserId() + FileSystems.getDefault().getSeparator() + fileName;
         filePath = filePath.replaceAll("\\\\", "/");
         String fileContent = articlePO.getArticleContent();
         if (!StringUtils.hasText(fileContent)) {
@@ -113,7 +113,7 @@ public class ArticleFileUtil {
         //根据名称直接删除
         if (StringUtils.hasText(title)) {
             String fileName = id + "." + title + ".md";
-            String filePath = articleFilePath + userId + FileSystems.getDefault().getSeparator() + fileName;
+            String filePath = articlePath + userId + FileSystems.getDefault().getSeparator() + fileName;
             filePath = filePath.replaceAll("\\\\", "/");
 
             File file = new File(filePath);
@@ -138,7 +138,7 @@ public class ArticleFileUtil {
      * @since 2025-02-23 05:06:59
      */
     public void delete(Integer userId, Integer id) {
-        String filePath = articleFilePath + userId + FileSystems.getDefault().getSeparator();
+        String filePath = articlePath + userId + FileSystems.getDefault().getSeparator();
         filePath = filePath.replaceAll("\\\\", "/");
 
         Path aPath = Paths.get(filePath);
@@ -236,7 +236,7 @@ public class ArticleFileUtil {
         if (userId == null) {
             return fileList;
         }
-        String userArticleFilePath = articleFilePath + userId + FileSystems.getDefault().getSeparator();
+        String userArticleFilePath = articlePath + userId + FileSystems.getDefault().getSeparator();
 
 
         File directory = new File(userArticleFilePath);
