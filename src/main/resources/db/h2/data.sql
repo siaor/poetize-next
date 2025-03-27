@@ -2,7 +2,7 @@
 
 -- 初始化安装记录，版本号为update.sql的最后一次更新版本号
 INSERT INTO `sys_update_log` (`create_time`, `update_time`, `version`, `note`)
-VALUES (now(), now(), '2025031501', '系统初始化安装完成');
+VALUES (now(), now(), '2025032601', '系统初始化安装完成');
 
 -- 默认管理员信息，账号admin，密码admin，todo:强化密码加密规则，现在为md5('明文密码')
 INSERT INTO `sys_user`(`id`, `username`, `password`, `phone_number`, `email`, `user_status`, `gender`, `open_id`,
@@ -54,7 +54,12 @@ VALUES ('邮箱-发件号', 'spring.mail.username', '', '1'),
        ('七牛云-下载域名', 'qiniu.downloadUrl', 'https://file.my.com/', '2'),
        ('七牛云-上传地址', 'qiniuUrl', 'https://upload.qiniup.com/', '2'),
        ('IM-聊天室启用状态', 'im.enable', 'true', '1'),
-       ('备案号', 'beian', '', '2');
+       ('备案号', 'beian', '', '2'),
+       ('支付宝-服务调用地址', 'alipay.serverUrl', 'https://openapi.alipay.com/gateway.do', '1'),
+       ('支付宝-服务公钥', 'alipay.publicKey', '', '1'),
+       ('支付宝-用户ID', 'alipay.userId', '2088922043284376', '1'),
+       ('支付宝-应用ID', 'alipay.appId', '', '1'),
+       ('支付宝-应用私钥', 'alipay.appKey', '', '1');
 
 -- 默认友链
 INSERT INTO `resource_path` (`title`, `classify`, `cover`, `url`, `introduction`, `type`, `status`, `remark`,

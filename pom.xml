@@ -14,7 +14,7 @@
     <!-- 【项目信息】 -->
     <groupId>com.siaor</groupId>
     <artifactId>poetize-next</artifactId>
-    <version>2.0.250315.1</version>
+    <version>2.0.250327.1</version>
     <name>${project.artifactId}</name>
     <description>POETIZE-NEXT 最美博客-下一站！诗与远方~</description>
     <url>https://github.com/siaor/poetize-next</url>
@@ -157,6 +157,13 @@
             <groupId>org.lionsoul</groupId>
             <artifactId>ip2region</artifactId>
             <version>2.7.0</version>
+        </dependency>
+
+        <!-- [支付宝付款依赖] 官网：https://open.alipay.com -->
+        <dependency>
+            <groupId>com.alipay.sdk</groupId>
+            <artifactId>alipay-sdk-java</artifactId>
+            <version>4.40.104.ALL</version>
         </dependency>
 
         <!-- [代码简化构建工具] 官网：https://projectlombok.org -->
