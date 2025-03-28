@@ -12,6 +12,7 @@ import com.siaor.poetize.next.res.repo.po.PayOrderPO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.util.Date;
 import java.util.List;
@@ -46,6 +47,13 @@ public class AliPayHandler {
     public String signType = "RSA2";
 
     /**
+     * 支付功能是否就绪
+     */
+    public boolean isReady() {
+        return StringUtils.hasText(userId) && StringUtils.hasText(appKey) && StringUtils.hasText(publicKey);
+    }
+
+    /**
      * 通过Alipay SDK获取订单信息
      * todo: 自定义实现调用（阿里支付SDK太臃肿了，打包占用了30M）
      */
@@ -69,7 +77,7 @@ public class AliPayHandler {
             AlipayDataBillAccountlogQueryResponse response = alipayClient.execute(request);
             if (response.isSuccess()) {
                 List<AccountLogItemResult> payList = response.getDetailList();
-                if(payList == null || payList.isEmpty()){
+                if (payList == null || payList.isEmpty()) {
                     return null;
                 }
                 return payList.stream().filter(p -> payOrderNum.equals(p.getTransMemo())).findFirst().orElse(null);

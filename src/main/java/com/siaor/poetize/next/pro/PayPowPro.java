@@ -129,6 +129,10 @@ public class PayPowPro implements PayPow {
      * 支付检测器
      */
     private void payChecker(PayOrderPO payOrder) {
+        if(!aliPayHandler.isReady()){
+            return;
+        }
+
         AtomicInteger count = new AtomicInteger(1);
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
         scheduler.scheduleAtFixedRate(() -> {
