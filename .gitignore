@@ -36,6 +36,4 @@ build/
 data/*
 !data/ip2region.xdb
 logs
-public/res
-public/web
-public/im
+public

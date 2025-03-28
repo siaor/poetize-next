@@ -1,6 +1,7 @@
 package com.siaor.poetize.next.res.utils.storage;
 
 import com.siaor.poetize.next.res.repo.po.ArticlePO;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -27,6 +28,11 @@ public class ArticleFileUtil {
 
     @Value("${local.articlePath}")
     private String articlePath;
+
+    @PostConstruct
+    public void init() {
+        this.articlePath = this.articlePath.replace("{root}", System.getProperty("user.dir"));
+    }
 
     /**
      * 创建文章md文件
@@ -87,10 +93,10 @@ public class ArticleFileUtil {
      * @author Siaor
      * @since 2025-03-10 08:29:08
      */
-    public void appendId(String filePath,Integer id) {
+    public void appendId(String filePath, Integer id) {
         Path originalPath = Paths.get(filePath);
         Path parent = originalPath.getParent();
-        Path newPath = parent.resolve(id + "." +originalPath.getFileName());
+        Path newPath = parent.resolve(id + "." + originalPath.getFileName());
 
         try {
             Files.move(originalPath, newPath, StandardCopyOption.ATOMIC_MOVE);

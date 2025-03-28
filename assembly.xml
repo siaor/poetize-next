@@ -45,23 +45,18 @@
                 <include>ip2region.xdb</include>
             </includes>
         </fileSet>
-        <!-- 【4.输出资源：博客前端项目打包文件】 -->
+        <!-- 【4.输出资源：前端项目打包文件】 -->
         <fileSet>
-            <directory>${basedir}/public/web</directory>
-            <outputDirectory>${file.separator}/public/web</outputDirectory>
+            <directory>${basedir}/public</directory>
+            <outputDirectory>${file.separator}/public</outputDirectory>
             <fileMode>0644</fileMode>
             <includes>
                 <include>**/*</include>
             </includes>
-        </fileSet>
-        <!-- 【5.输出资源：微聊前端项目打包文件】 -->
-        <fileSet>
-            <directory>${basedir}/public/im</directory>
-            <outputDirectory>${file.separator}/public/web/im</outputDirectory>
-            <fileMode>0644</fileMode>
-            <includes>
-                <include>**/*</include>
-            </includes>
+            <excludes>
+                <!-- 排除开发临时res目录 -->
+                <exclude>res/**</exclude>
+            </excludes>
         </fileSet>
     </fileSets>
     <!-- 【输出项目依赖jar】项目依赖的jar包输出配置，统一输出到lib目录 -->

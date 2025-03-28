@@ -1,14 +1,13 @@
 package com.siaor.poetize.next.res.utils.storage;
 
 import cn.hutool.core.io.FileUtil;
-import com.siaor.poetize.next.res.repo.po.ResourcePO;
-import com.siaor.poetize.next.res.norm.exception.SysRuntimeException;
-import com.siaor.poetize.next.pow.ResourcePow;
-import com.siaor.poetize.next.res.utils.StringUtil;
 import com.siaor.poetize.next.app.vo.FileVO;
+import com.siaor.poetize.next.pow.ResourcePow;
+import com.siaor.poetize.next.res.norm.exception.SysRuntimeException;
+import com.siaor.poetize.next.res.repo.po.ResourcePO;
+import com.siaor.poetize.next.res.utils.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -23,11 +22,9 @@ import java.util.List;
 @ConditionalOnProperty(name = "local.enable", havingValue = "true")
 public class LocalUtil implements StoreService {
 
-    @Value("${local.resPath}")
-    private String resPath;
+    private final String visitUrl = File.separator + "res" + File.separator;
 
-    @Value("${local.visitUrl}")
-    private String visitUrl;
+    private final String resPath = System.getProperty("user.dir") + File.separator + "public" + visitUrl;
 
     @Autowired
     private ResourcePow resourcePow;
