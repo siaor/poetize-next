@@ -11,7 +11,9 @@ spring:
     multipart:
       max-file-size: 100MB
       max-request-size: 100MB
-
+  web:
+    resources:
+      static-locations: file:./public/web/
   mail:
     host: smtp.qq.com
     username:

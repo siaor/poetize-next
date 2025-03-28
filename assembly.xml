@@ -15,7 +15,7 @@
         <!-- 【1.输出自定义脚本】将bin目录下的jar启动脚本输出到打包后的目录中 -->
         <fileSet>
             <!--lineEnding选项可用于控制给定的行结束文件 -->
-            <lineEnding>unix</lineEnding>
+            <!--<lineEnding>unix</lineEnding>-->
             <directory>${basedir}/bin</directory>
             <outputDirectory>${file.separator}/bin</outputDirectory>
             <fileMode>0755</fileMode>

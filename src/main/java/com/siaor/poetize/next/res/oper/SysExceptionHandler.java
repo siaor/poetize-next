@@ -1,8 +1,8 @@
 package com.siaor.poetize.next.res.oper;
 
 import com.alibaba.fastjson.JSON;
-import com.siaor.poetize.next.res.norm.ActResult;
 import com.siaor.poetize.next.res.norm.ActCode;
+import com.siaor.poetize.next.res.norm.ActResult;
 import com.siaor.poetize.next.res.norm.exception.SysLoginException;
 import com.siaor.poetize.next.res.norm.exception.SysRuntimeException;
 import com.siaor.poetize.next.res.utils.PoetryUtil;
@@ -13,6 +13,8 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -47,5 +49,11 @@ public class SysExceptionHandler {
         }
 
         return ActResult.fail(ActCode.FAIL);
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ModelAndView noResourceFound(NoResourceFoundException ex) {
+        log.info(ex.getMessage());
+        return new ModelAndView("forward:/");
     }
 }

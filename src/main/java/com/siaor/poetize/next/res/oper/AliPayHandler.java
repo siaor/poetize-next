@@ -45,6 +45,10 @@ public class AliPayHandler {
     public String charset = "UTF-8";
     public String signType = "RSA2";
 
+    /**
+     * 通过Alipay SDK获取订单信息
+     * todo: 自定义实现调用（阿里支付SDK太臃肿了，打包占用了30M）
+     */
     public AccountLogItemResult getPayInfo(PayOrderPO payOrder) {
         String payOrderNum = payOrder.getNum();
         Date startTime = DateUtil.offsetMinute(payOrder.getCreateTime(), -1);
