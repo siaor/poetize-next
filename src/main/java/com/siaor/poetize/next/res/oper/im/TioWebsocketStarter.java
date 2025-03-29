@@ -3,6 +3,7 @@ package com.siaor.poetize.next.res.oper.im;
 import com.siaor.poetize.next.res.norm.im.ImConfigConst;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.tio.server.ServerTioConfig;
@@ -12,6 +13,16 @@ import org.tio.websocket.server.WsServerStarter;
 @Slf4j
 @ConditionalOnProperty(name = "im.enable", havingValue = "true")
 public class TioWebsocketStarter {
+
+    @Value("${server.ssl.enabled:false}")
+    private Boolean sslEnabled;
+
+    @Value("${server.ssl.key-store:null}")
+    private String sslKeyStore;
+
+    @Value("${server.ssl.key-store-password:null}")
+    private String sslKeyStorePassword;
+
 
     private WsServerStarter wsServerStarter;
 
@@ -38,6 +49,9 @@ public class TioWebsocketStarter {
         serverTioConfig.setIpStatListener(imIpStatListener);
         serverTioConfig.ipStats.addDurations(ImConfigConst.IP_STAT_DURATIONS);
         serverTioConfig.setHeartbeatTimeout(ImConfigConst.HEARTBEAT_TIMEOUT);
+        if (sslEnabled) {
+            serverTioConfig.useSsl(sslKeyStore, sslKeyStore, sslKeyStorePassword);
+        }
     }
 
     public void start() throws Exception {
