@@ -67,3 +67,11 @@ CREATE TABLE IF NOT EXISTS `pay_order`
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='系统-支付订单表';
+
+-- >>>>>>>【更新日志】<<<<<<<
+INSERT INTO `sys_update_log` (`create_time`, `update_time`, `version`, `note`)
+VALUES (now(), now(), '2025040501', '文章增加介绍、金额字段');
+
+ALTER TABLE `article`
+    ADD COLUMN `article_intro` varchar(256) NOT NULL DEFAULT '' COMMENT '博文介绍' AFTER `article_title`,
+    ADD COLUMN `money` decimal(10, 4) NOT NULL DEFAULT 0 COMMENT '金额' AFTER `tips`;

@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
@@ -59,6 +60,12 @@ public class ArticlePO implements Serializable {
     private String articleTitle;
 
     /**
+     * 博文介绍
+     */
+    @TableField("article_intro")
+    private String articleIntro;
+
+    /**
      * 博文内容
      */
     @TableField("article_content")
@@ -81,6 +88,12 @@ public class ArticlePO implements Serializable {
      */
     @TableField("tips")
     private String tips;
+
+    /**
+     * 金额
+     */
+    @TableField("money")
+    private BigDecimal money;
 
     /**
      * 是否可见[0:否，1:是]

@@ -8,6 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -22,6 +23,8 @@ public class ArticleVO {
 
     @NotBlank(message = "文章标题不能为空")
     private String articleTitle;
+
+    private String articleIntro;
 
     @NotBlank(message = "文章内容不能为空")
     private String articleContent;
@@ -39,6 +42,8 @@ public class ArticleVO {
     private String password;
 
     private String tips;
+
+    private BigDecimal money;
 
     private Boolean viewStatus;
 

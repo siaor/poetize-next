@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 import java.util.Random;
 import java.util.concurrent.Executors;
@@ -90,12 +91,19 @@ public class PayPowPro implements PayPow {
         if (userId == null) {
             userId = 0;
         }
+        Date endTime = new Date();
+        Date startTime = DateUtil.offsetMinute(endTime, -10);
         QueryWrapper<PayOrderPO> payQW = new QueryWrapper<>();
         payQW.eq("id", payOrderId)
                 .eq("act_type", actType)
                 .eq("act_id", actId)
-                .eq("money", money)
-                .eq("user_id", userId);
+                .eq("user_id", userId)
+                .between("create_time", startTime, endTime);
+
+        if (money != null) {
+            payQW.eq("money", money);
+        }
+
         PayOrderPO payOrder = payOrderMapper.selectOne(payQW);
         return ActResult.success(payOrder);
     }
@@ -110,9 +118,13 @@ public class PayPowPro implements PayPow {
         payQW.eq("id", payOrderId)
                 .eq("act_type", actType)
                 .eq("act_id", actId)
-                .eq("money", money)
                 .eq("user_id", userId)
                 .eq("status", PayOrderStatus.UNPAID);
+
+        if (money != null) {
+            payQW.eq("money", money);
+        }
+
         PayOrderPO payOrder = payOrderMapper.selectOne(payQW);
         if (payOrder == null) {
             return ActResult.fail("找不到相关订单");
@@ -129,7 +141,7 @@ public class PayPowPro implements PayPow {
      * 支付检测器
      */
     private void payChecker(PayOrderPO payOrder) {
-        if(!aliPayHandler.isReady()){
+        if (!aliPayHandler.isReady()) {
             return;
         }
 
@@ -209,7 +221,7 @@ public class PayPowPro implements PayPow {
             payUrl = payUrl + "&memo=" + payNum;
         }
         if (payMoney != null && payMoney.compareTo(BigDecimal.ZERO) > 0) {
-            payUrl = payUrl + "&amount=" + payNum;
+            payUrl = payUrl + "&amount=" + payMoney.setScale(2, RoundingMode.HALF_UP);
         }
         return payUrl + "&userId=" + payUserId;
     }

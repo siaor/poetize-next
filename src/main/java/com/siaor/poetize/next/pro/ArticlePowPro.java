@@ -2,30 +2,28 @@ package com.siaor.poetize.next.pro;
 
 import cn.hutool.crypto.SecureUtil;
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.siaor.poetize.next.res.oper.aop.ResourceCheck;
-import com.siaor.poetize.next.res.norm.ActResult;
-import com.siaor.poetize.next.res.norm.CommonConst;
-import com.siaor.poetize.next.res.repo.mapper.ArticleMapper;
-import com.siaor.poetize.next.res.repo.mapper.LabelMapper;
-import com.siaor.poetize.next.res.repo.mapper.SortMapper;
-import com.siaor.poetize.next.res.norm.ActCode;
-import com.siaor.poetize.next.res.norm.CommentTypeEnum;
-import com.siaor.poetize.next.res.norm.SysEnum;
-import com.siaor.poetize.next.pow.ArticlePow;
-import com.siaor.poetize.next.pow.UserPow;
-import com.siaor.poetize.next.res.repo.po.*;
-import com.siaor.poetize.next.res.utils.CommonQuery;
-import com.siaor.poetize.next.res.utils.PoetryUtil;
-import com.siaor.poetize.next.res.repo.cache.SysCache;
-import com.siaor.poetize.next.res.utils.mail.MailUtil;
-import com.siaor.poetize.next.res.utils.storage.ArticleFileUtil;
-import com.siaor.poetize.next.res.task.ArticleScanTask;
 import com.siaor.poetize.next.app.vo.ArticleVO;
 import com.siaor.poetize.next.app.vo.BaseRequestVO;
+import com.siaor.poetize.next.pow.ArticlePow;
+import com.siaor.poetize.next.pow.UserPow;
+import com.siaor.poetize.next.res.norm.*;
+import com.siaor.poetize.next.res.oper.aop.ResourceCheck;
+import com.siaor.poetize.next.res.repo.cache.SysCache;
+import com.siaor.poetize.next.res.repo.mapper.ArticleMapper;
+import com.siaor.poetize.next.res.repo.mapper.LabelMapper;
+import com.siaor.poetize.next.res.repo.mapper.PayOrderMapper;
+import com.siaor.poetize.next.res.repo.mapper.SortMapper;
+import com.siaor.poetize.next.res.repo.po.*;
+import com.siaor.poetize.next.res.task.ArticleScanTask;
+import com.siaor.poetize.next.res.utils.CommonQuery;
+import com.siaor.poetize.next.res.utils.PoetryUtil;
+import com.siaor.poetize.next.res.utils.mail.MailUtil;
+import com.siaor.poetize.next.res.utils.storage.ArticleFileUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,6 +79,9 @@ public class ArticlePowPro extends ServiceImpl<ArticleMapper, ArticlePO> impleme
     @Autowired
     private ArticleScanTask articleScanTask;
 
+    @Autowired
+    private PayOrderMapper payOrderMapper;
+
     @Override
     public ActResult saveArticle(ArticleVO articleVO) {
         if (articleVO.getViewStatus() != null && !articleVO.getViewStatus() && !StringUtils.hasText(articleVO.getPassword())) {
@@ -96,11 +97,13 @@ public class ArticlePowPro extends ServiceImpl<ArticleMapper, ArticlePO> impleme
         if (articleVO.getViewStatus() != null && !articleVO.getViewStatus() && StringUtils.hasText(articleVO.getPassword())) {
             articlePO.setPassword(articleVO.getPassword());
             articlePO.setTips(articleVO.getTips());
+            articlePO.setMoney(articleVO.getMoney());
         }
         articlePO.setViewStatus(articleVO.getViewStatus());
         articlePO.setCommentStatus(articleVO.getCommentStatus());
         articlePO.setRecommendStatus(articleVO.getRecommendStatus());
         articlePO.setArticleTitle(articleVO.getArticleTitle());
+        articlePO.setArticleIntro(articleVO.getArticleIntro());
         articlePO.setArticleContent(articleVO.getArticleContent());
         articlePO.setSortId(articleVO.getSortId());
         articlePO.setLabelId(articleVO.getLabelId());
@@ -171,6 +174,7 @@ public class ArticlePowPro extends ServiceImpl<ArticleMapper, ArticlePO> impleme
                 .set(ArticlePO::getLabelId, articleVO.getLabelId())
                 .set(ArticlePO::getSortId, articleVO.getSortId())
                 .set(ArticlePO::getArticleTitle, articleVO.getArticleTitle())
+                .set(ArticlePO::getArticleIntro, articleVO.getArticleIntro())
                 .set(ArticlePO::getUpdateBy, PoetryUtil.getUsername())
                 .set(ArticlePO::getUpdateTime, LocalDateTime.now())
                 .set(ArticlePO::getVideoUrl, StringUtils.hasText(articleVO.getVideoUrl()) ? articleVO.getVideoUrl() : null)
@@ -188,6 +192,7 @@ public class ArticlePowPro extends ServiceImpl<ArticleMapper, ArticlePO> impleme
         if (articleVO.getViewStatus() != null && !articleVO.getViewStatus() && StringUtils.hasText(articleVO.getPassword())) {
             updateChainWrapper.set(ArticlePO::getPassword, articleVO.getPassword());
             updateChainWrapper.set(StringUtils.hasText(articleVO.getTips()), ArticlePO::getTips, articleVO.getTips());
+            updateChainWrapper.set(ArticlePO::getMoney, articleVO.getMoney());
         }
         if (articleVO.getViewStatus() != null) {
             updateChainWrapper.set(ArticlePO::getViewStatus, articleVO.getViewStatus());
@@ -216,7 +221,7 @@ public class ArticlePowPro extends ServiceImpl<ArticleMapper, ArticlePO> impleme
         //启动重载任务
         taskHandle(userId);
 
-        return ActResult.success("正在为您重载文章，数量："+fileList.size());
+        return ActResult.success("正在为您重载文章，数量：" + fileList.size());
     }
 
     private void taskHandle(Integer userId) {
@@ -230,14 +235,14 @@ public class ArticlePowPro extends ServiceImpl<ArticleMapper, ArticlePO> impleme
                     String filePath = articleScanTask.take();
                     log.info("正在载入文章：{}", filePath);
                     ArticlePO articlePO = articleFileUtil.read(filePath);
-                    if(articlePO ==null){
-                        return ;
+                    if (articlePO == null) {
+                        return;
                     }
 
                     Integer articleId = articlePO.getId();
-                    if(articleId != null){
+                    if (articleId != null) {
                         log.info("文章已存在，跳过载入！");
-                        return ;
+                        return;
                     }
                     //补全数据
                     articlePO.setUserId(userId);
@@ -324,12 +329,32 @@ public class ArticlePowPro extends ServiceImpl<ArticleMapper, ArticlePO> impleme
             return ActResult.fail(ActCode.RES_LOSE);
         }
 
-        if (!articlePO.getViewStatus()) {
-            if (!StringUtils.hasText(password)) {
-                return ActResult.fail(ActCode.PWD_NEED, StringUtils.hasText(articlePO.getTips()) ? articlePO.getTips() : ActCode.PWD_NEED.getMsg());
+        boolean needCheck = !articlePO.getViewStatus();
+        ArticleVO articleVO;
+        if (needCheck) {
+            //用户是否已经购买
+            Integer userId = PoetryUtil.getUserId();
+            if (userId != null) {
+                QueryWrapper<PayOrderPO> payQW = new QueryWrapper<>();
+                payQW.eq("act_type", PayOrderActType.ARTICLE)
+                        .eq("status", PayOrderStatus.PAID)
+                        .eq("user_id", userId)
+                        .eq("act_id", id);
+                if (payOrderMapper.exists(payQW)) {
+                    needCheck = false;
+                }
             }
-            if (!articlePO.getPassword().equals(password)) {
-                return ActResult.fail(ActCode.PWD_ERROR);
+            if (needCheck) {
+                if (!StringUtils.hasText(password)) {
+                    articleVO = new ArticleVO();
+                    articleVO.setId(articlePO.getId());
+                    articleVO.setTips(articlePO.getTips());
+                    articleVO.setMoney(articlePO.getMoney());
+                    return ActResult.fail(ActCode.PWD_NEED, articleVO);
+                }
+                if (!articlePO.getPassword().equals(password)) {
+                    return ActResult.fail(ActCode.PWD_ERROR);
+                }
             }
         }
 
@@ -338,7 +363,7 @@ public class ArticlePowPro extends ServiceImpl<ArticleMapper, ArticlePO> impleme
         if (StringUtils.hasText(articlePO.getVideoUrl())) {
             articlePO.setVideoUrl(SecureUtil.aes(CommonConst.CRYPOTJS_KEY.getBytes(StandardCharsets.UTF_8)).encryptBase64(articlePO.getVideoUrl()));
         }
-        ArticleVO articleVO = buildArticleVO(articlePO, false);
+        articleVO = buildArticleVO(articlePO, false);
         return ActResult.success(articleVO);
     }
 
