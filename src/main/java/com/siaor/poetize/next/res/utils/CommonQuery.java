@@ -1,22 +1,22 @@
 package com.siaor.poetize.next.res.utils;
 
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
-import com.siaor.poetize.next.res.norm.CommonConst;
+import com.siaor.poetize.next.app.vo.FamilyVO;
 import com.siaor.poetize.next.pow.UserPow;
+import com.siaor.poetize.next.res.norm.CommonConst;
+import com.siaor.poetize.next.res.repo.cache.SysCache;
 import com.siaor.poetize.next.res.repo.mapper.*;
 import com.siaor.poetize.next.res.repo.po.*;
-import com.siaor.poetize.next.res.repo.cache.SysCache;
-import com.siaor.poetize.next.app.vo.FamilyVO;
 import jakarta.annotation.PostConstruct;
 import org.apache.commons.io.IOUtils;
 import org.lionsoul.ip2region.xdb.Searcher;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -25,9 +25,6 @@ import java.util.stream.Collectors;
 
 @Component
 public class CommonQuery {
-
-    @Value("${sys.ip2region}")
-    private String ip2region;
 
     @Autowired
     private CommentMapper commentMapper;
@@ -55,7 +52,7 @@ public class CommonQuery {
     @PostConstruct
     public void init() {
         try {
-            searcher = Searcher.newWithBuffer(IOUtils.toByteArray(new ClassPathResource(ip2region).getInputStream()));
+            searcher = Searcher.newWithBuffer(IOUtils.toByteArray(new FileInputStream(System.getProperty("user.dir") + File.separator + "data" + File.separator + "ip2region.xdb")));
         } catch (Exception e) {
         }
     }

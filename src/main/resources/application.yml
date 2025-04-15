@@ -55,5 +55,3 @@ mybatis-plus:
 sys:
   # 是否开启自动初始化
   auto-init: true
-  # 离线IP定位库
-  ip2region: file:./data/ip2region.xdb
