@@ -1,7 +1,7 @@
 package com.siaor.poetize.next.res.repo.mapper;
 
-import com.siaor.poetize.next.res.repo.po.HistoryInfoPO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.siaor.poetize.next.res.repo.po.HistoryInfoPO;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
@@ -31,7 +31,7 @@ public interface HistoryInfoMapper extends BaseMapper<HistoryInfoPO> {
     /**
      * 访问次数最多的10个IP
      */
-    @Select("select ip, count(*) as num" +
+    @Select("select ip, min(province) as province, min(city) as city, count(*) as num" +
             " from history_info" +
             " group by ip" +
             " order by num desc" +
@@ -41,7 +41,7 @@ public interface HistoryInfoMapper extends BaseMapper<HistoryInfoPO> {
     /**
      * 访问24小时内的数据
      */
-    @Select("select ip, user_id, nation, province" +
+    @Select("select ip, user_id, nation, province, city" +
             " from history_info" +
             " where create_time >= (now() - interval '24' hour)")
     List<Map<String, Object>> getHistoryBy24Hour();

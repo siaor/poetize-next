@@ -2,16 +2,16 @@ package com.siaor.poetize.next.app.api.sys;
 
 
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
-import com.siaor.poetize.next.res.oper.aop.LoginCheck;
+import com.siaor.poetize.next.pow.WebInfoPow;
 import com.siaor.poetize.next.res.norm.ActResult;
 import com.siaor.poetize.next.res.norm.CommonConst;
+import com.siaor.poetize.next.res.oper.aop.LoginCheck;
+import com.siaor.poetize.next.res.repo.cache.SysCache;
 import com.siaor.poetize.next.res.repo.mapper.HistoryInfoMapper;
 import com.siaor.poetize.next.res.repo.po.HistoryInfoPO;
 import com.siaor.poetize.next.res.repo.po.UserPO;
 import com.siaor.poetize.next.res.repo.po.WebInfoPO;
-import com.siaor.poetize.next.pow.WebInfoPow;
 import com.siaor.poetize.next.res.utils.CommonQuery;
-import com.siaor.poetize.next.res.repo.cache.SysCache;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,7 +21,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -108,30 +111,42 @@ public class WebInfoApi {
         result.put("ip_count_yest", ipHistoryCount.stream().map(m -> m.get("ip")).distinct().count());
         result.put("username_yest", ipHistoryCount.stream().map(m -> {
             Object userId = m.get("user_id");
+            String username = "匿名用户";
+            String avatar = "/sys/avatar/1.jpg";
+            Map<String, String> userInfo = new HashMap<>();
             if (userId != null) {
                 UserPO userPO = commonQuery.getUser(Integer.valueOf(userId.toString()));
                 if (userPO != null) {
-                    Map<String, String> userInfo = new HashMap<>();
-                    userInfo.put("avatar", userPO.getAvatar());
-                    userInfo.put("username", userPO.getUsername());
-                    return userInfo;
+                    avatar = userPO.getAvatar();
+                    username = userPO.getUsername();
                 }
             }
-            return null;
+            userInfo.put("avatar", avatar);
+            userInfo.put("username", username);
+            userInfo.put("ip", m.get("ip") != null ? m.get("ip").toString() : "");
+            userInfo.put("province", m.get("province") != null ? m.get("province").toString() : "");
+            userInfo.put("city", m.get("city") != null ? m.get("city").toString() : "");
+            return userInfo;
         }).filter(Objects::nonNull).collect(Collectors.toList()));
         result.put("ip_count_today", infoList.stream().map(HistoryInfoPO::getIp).distinct().count());
         result.put("username_today", infoList.stream().map(m -> {
             Integer userId = m.getUserId();
+            String username = "匿名用户";
+            String avatar = "/sys/avatar/1.jpg";
+            Map<String, String> userInfo = new HashMap<>();
             if (userId != null) {
                 UserPO userPO = commonQuery.getUser(userId);
                 if (userPO != null) {
-                    Map<String, String> userInfo = new HashMap<>();
-                    userInfo.put("avatar", userPO.getAvatar());
-                    userInfo.put("username", userPO.getUsername());
-                    return userInfo;
+                    avatar = userPO.getAvatar();
+                    username = userPO.getUsername();
                 }
             }
-            return null;
+            userInfo.put("avatar", avatar);
+            userInfo.put("username", username);
+            userInfo.put("ip", m.getIp() != null ? m.getIp() : "");
+            userInfo.put("province", m.getProvince() != null ? m.getProvince() : "");
+            userInfo.put("city", m.getCity() != null ? m.getCity() : "");
+            return userInfo;
         }).filter(Objects::nonNull).collect(Collectors.toList()));
 
         List<Map<String, Object>> list = infoList.stream()
