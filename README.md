@@ -162,6 +162,8 @@ POETIZE-NEXT全新升级！
 
 <center>
     <a href="https://blog.siaor.com" target="_blank"> 『 SIAOR 』</a>
+    <a href="https://jogjo.cn" target="_blank"> 『 JogJo 』</a>
+    <a href="http://www.meimei168.sbs:8081/" target="_blank"> 『 Ning-Blog 』</a>
 </center>
 
 ---

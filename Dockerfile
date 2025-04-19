@@ -8,7 +8,7 @@ LABEL maintainer="siaor@qq.com"
 COPY ./dev/nginx/nginx.conf /etc/nginx/nginx.conf
 
 # 复制安装包目录并自动解压
-ADD ./target/poetize-next-2.0.250313.1.tar.gz /app
+ADD ./target/poetize-next-2.0.250327.1.tar.gz /app
 
 # 暴露端口
 EXPOSE 80 443
@@ -19,5 +19,5 @@ WORKDIR /app/poetize-next
 # 启动
 ENTRYPOINT ["/bin/sh","-c","/usr/sbin/nginx;java -server -Dfile.encoding=UTF-8 -cp 'lib/*' com.siaor.poetize.next.PoetizeNextApplication"]
 
-# 构建命令：docker build -t poetize-next:2.0.250315.1 .
-# 运行目录：docker run -d -it -p 80:80 -p 443:443 --restart=always --name=pn -v /app/poetize-next:/app/poetize-next poetize-next:2.0.250315.1
+# 构建命令：docker build -t siaor/poetize-next:2.0.250327.1 .
+# 运行命令：docker run -d -it -p 80:80 -p 443:443 --restart=always --name=pn -v /app/poetize-next:/app/poetize-next siaor/poetize-next:2.0.250327.1
